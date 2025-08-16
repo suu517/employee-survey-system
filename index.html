@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>従業員満足度・期待度調査</title>
+    <link rel="stylesheet" href="survey-style.css">
+</head>
+<body>
+    <div class="survey-container">
+        <!-- ヘッダー -->
+        <header class="survey-header">
+            <div class="header-content">
+                <div class="company-logo">
+                    <h1>🏢 従業員満足度・期待度調査</h1>
+                </div>
+                <div class="progress-info">
+                    <span id="pageIndicator">1/9</span>
+                </div>
+            </div>
+            
+            <!-- プログレスバー -->
+            <div class="progress-bar-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">11%</span>
+            </div>
+        </header>
+
+        <!-- 調査説明ページ (ページ1) -->
+        <div class="survey-page active" id="page1">
+            <div class="page-header">
+                <h2>満足度・期待度調査</h2>
+                <p class="page-description">このアンケートは、従業員の皆様の満足度と期待度を調査し、<br>より良い職場環境づくりに役立てることを目的としています</p>
+            </div>
+            
+            <div class="content-box">
+                <h3>📋 調査について</h3>
+                <div class="survey-info">
+                    <p>各質問について、<strong>現在の満足度</strong>と<strong>今後の期待度</strong>の両方をお答えいただきます。</p>
+                    <p>回答は匿名で処理され、個人が特定されることはありません。</p>
+                    <br>
+                    <p><strong>アンケートの所要時間は約15分です。ご協力をお願いいたします。</strong></p>
+                    
+                    <div class="survey-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">9</span>
+                            <span class="stat-label">ページ</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">105</span>
+                            <span class="stat-label">質問</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">15</span>
+                            <span class="stat-label">分</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 基本情報ページ (ページ2) -->
+        <div class="survey-page" id="page2">
+            <div class="page-header">
+                <h2>基本情報</h2>
+                <p class="page-description">あなたの基本的な情報をお教えください</p>
+            </div>
+            
+            <div class="questions-container">
+                <div class="question-group">
+                    <label class="question-label required">雇用形態</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="employment_type" value="正社員" required>
+                            <span>正社員</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="employment_type" value="契約社員" required>
+                            <span>契約社員</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="employment_type" value="派遣社員" required>
+                            <span>派遣社員</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="employment_type" value="パート・アルバイト" required>
+                            <span>パート・アルバイト</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">入社形態</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="joining_type" value="新卒入社" required>
+                            <span>新卒入社</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="joining_type" value="中途入社" required>
+                            <span>中途入社</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">所属事業部</label>
+                    <select class="select-input" name="department" required onchange="toggleOtherInput(this, 'department_other')">
+                        <option value="">選択してください</option>
+                        <option value="営業部">営業部</option>
+                        <option value="マーケティング部">マーケティング部</option>
+                        <option value="開発部">開発部</option>
+                        <option value="人事部">人事部</option>
+                        <option value="経理・財務部">経理・財務部</option>
+                        <option value="総務部">総務部</option>
+                        <option value="その他">その他</option>
+                    </select>
+                    <input type="text" class="select-input other-input" name="department_other" id="department_other" placeholder="その他の場合は具体的にご記入ください" style="display: none; margin-top: 10px;">
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">役職</label>
+                    <select class="select-input" name="position" required>
+                        <option value="">選択してください</option>
+                        <option value="一般社員">一般社員</option>
+                        <option value="主任・リーダー">主任・リーダー</option>
+                        <option value="係長・課長代理">係長・課長代理</option>
+                        <option value="課長">課長</option>
+                        <option value="部長">部長</option>
+                        <option value="役員">役員</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 詳細情報ページ (ページ3) -->
+        <div class="survey-page" id="page3">
+            <div class="page-header">
+                <h2>詳細情報</h2>
+                <p class="page-description">勤務状況についてお教えください</p>
+            </div>
+            
+            <div class="questions-container">
+                <div class="question-group">
+                    <label class="question-label required">職種</label>
+                    <select class="select-input" name="job_type" required onchange="toggleOtherInput(this, 'job_type_other')">
+                        <option value="">選択してください</option>
+                        <option value="営業・販売">営業・販売</option>
+                        <option value="マーケティング・企画">マーケティング・企画</option>
+                        <option value="エンジニア・技術職">エンジニア・技術職</option>
+                        <option value="デザイナー・クリエイティブ">デザイナー・クリエイティブ</option>
+                        <option value="事務・アシスタント">事務・アシスタント</option>
+                        <option value="人事・労務">人事・労務</option>
+                        <option value="経理・財務">経理・財務</option>
+                        <option value="法務・コンプライアンス">法務・コンプライアンス</option>
+                        <option value="その他">その他</option>
+                    </select>
+                    <input type="text" class="select-input other-input" name="job_type_other" id="job_type_other" placeholder="その他の場合は具体的にご記入ください" style="display: none; margin-top: 10px;">
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">入社年度を教えてください</label>
+                    <p class="question-hint">※2019年入社の場合には、2019とお答えください。</p>
+                    <input type="number" class="number-input" name="joining_year" placeholder="例: 2019" min="1980" max="2024" required>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">概算年収を教えてください（万円）</label>
+                    <p class="question-hint">450万円の場合には、450と半角でお答えください。</p>
+                    <input type="number" class="number-input" name="annual_income" placeholder="例: 450" min="200" max="2000" required>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">1ヶ月当たりの平均残業時間を教えてください（時間）</label>
+                    <p class="question-hint">残業時間が月100時間ほどある方は100とお答えください。</p>
+                    <input type="number" class="number-input" name="overtime_hours" placeholder="例: 30" min="0" max="200" required>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">1年間当たりの平均有給休暇取得率を教えてください（%）</label>
+                    <p class="question-hint">全て利用されていれば100、80%ほど利用されていれば80とお答えください。</p>
+                    <input type="number" class="number-input" name="paid_leave_rate" placeholder="例: 80" min="0" max="100" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- 総合評価ページ (ページ4) -->
+        <div class="survey-page" id="page4">
+            <div class="page-header">
+                <h2>総合評価</h2>
+                <p class="page-description">現在の職場に対する総合的な評価をお聞かせください</p>
+            </div>
+            
+            <div class="questions-container">
+                <div class="question-group">
+                    <label class="question-label required">総合評価：自分の親しい友人や家族に対して、この会社への転職・就職をどの程度勧めたいと思いますか？（0〜10の11段階評価でご回答ください）</label>
+                    <div class="rating-scale">
+                        <div class="scale-labels">
+                            <span>全く勧めたくない(0)</span>
+                            <span>どちらとも言えない(5)</span>
+                            <span>非常に勧めたい(10)</span>
+                        </div>
+                        <div class="scale-options eleven-point">
+                            <label class="scale-option" data-value="0">
+                                <input type="radio" name="recommendation" value="0" required>
+                                <span>0</span>
+                            </label>
+                            <label class="scale-option" data-value="1">
+                                <input type="radio" name="recommendation" value="1" required>
+                                <span>1</span>
+                            </label>
+                            <label class="scale-option" data-value="2">
+                                <input type="radio" name="recommendation" value="2" required>
+                                <span>2</span>
+                            </label>
+                            <label class="scale-option" data-value="3">
+                                <input type="radio" name="recommendation" value="3" required>
+                                <span>3</span>
+                            </label>
+                            <label class="scale-option" data-value="4">
+                                <input type="radio" name="recommendation" value="4" required>
+                                <span>4</span>
+                            </label>
+                            <label class="scale-option" data-value="5">
+                                <input type="radio" name="recommendation" value="5" required>
+                                <span>5</span>
+                            </label>
+                            <label class="scale-option" data-value="6">
+                                <input type="radio" name="recommendation" value="6" required>
+                                <span>6</span>
+                            </label>
+                            <label class="scale-option" data-value="7">
+                                <input type="radio" name="recommendation" value="7" required>
+                                <span>7</span>
+                            </label>
+                            <label class="scale-option" data-value="8">
+                                <input type="radio" name="recommendation" value="8" required>
+                                <span>8</span>
+                            </label>
+                            <label class="scale-option" data-value="9">
+                                <input type="radio" name="recommendation" value="9" required>
+                                <span>9</span>
+                            </label>
+                            <label class="scale-option" data-value="10">
+                                <input type="radio" name="recommendation" value="10" required>
+                                <span>10</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">総合満足度：自社の現在の働く環境や条件、周りの人間関係なども含めあなたはどの程度満足されていますか？（0〜10の11段階評価でご回答ください）</label>
+                    <div class="rating-scale">
+                        <div class="scale-labels">
+                            <span>全く満足していない(0)</span>
+                            <span>どちらとも言えない(5)</span>
+                            <span>非常に満足している(10)</span>
+                        </div>
+                        <div class="scale-options eleven-point">
+                            <label class="scale-option" data-value="0">
+                                <input type="radio" name="overall_satisfaction" value="0" required>
+                                <span>0</span>
+                            </label>
+                            <label class="scale-option" data-value="1">
+                                <input type="radio" name="overall_satisfaction" value="1" required>
+                                <span>1</span>
+                            </label>
+                            <label class="scale-option" data-value="2">
+                                <input type="radio" name="overall_satisfaction" value="2" required>
+                                <span>2</span>
+                            </label>
+                            <label class="scale-option" data-value="3">
+                                <input type="radio" name="overall_satisfaction" value="3" required>
+                                <span>3</span>
+                            </label>
+                            <label class="scale-option" data-value="4">
+                                <input type="radio" name="overall_satisfaction" value="4" required>
+                                <span>4</span>
+                            </label>
+                            <label class="scale-option" data-value="5">
+                                <input type="radio" name="overall_satisfaction" value="5" required>
+                                <span>5</span>
+                            </label>
+                            <label class="scale-option" data-value="6">
+                                <input type="radio" name="overall_satisfaction" value="6" required>
+                                <span>6</span>
+                            </label>
+                            <label class="scale-option" data-value="7">
+                                <input type="radio" name="overall_satisfaction" value="7" required>
+                                <span>7</span>
+                            </label>
+                            <label class="scale-option" data-value="8">
+                                <input type="radio" name="overall_satisfaction" value="8" required>
+                                <span>8</span>
+                            </label>
+                            <label class="scale-option" data-value="9">
+                                <input type="radio" name="overall_satisfaction" value="9" required>
+                                <span>9</span>
+                            </label>
+                            <label class="scale-option" data-value="10">
+                                <input type="radio" name="overall_satisfaction" value="10" required>
+                                <span>10</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">あなたはこの会社でこれからも長く働きたいとどの程度思われますか？（0〜10の11段階評価でご回答ください）</label>
+                    <div class="rating-scale">
+                        <div class="scale-labels">
+                            <span>全く思わない(0)</span>
+                            <span>どちらとも言えない(5)</span>
+                            <span>強く思う(10)</span>
+                        </div>
+                        <div class="scale-options eleven-point">
+                            <label class="scale-option" data-value="0">
+                                <input type="radio" name="retention_intention" value="0" required>
+                                <span>0</span>
+                            </label>
+                            <label class="scale-option" data-value="1">
+                                <input type="radio" name="retention_intention" value="1" required>
+                                <span>1</span>
+                            </label>
+                            <label class="scale-option" data-value="2">
+                                <input type="radio" name="retention_intention" value="2" required>
+                                <span>2</span>
+                            </label>
+                            <label class="scale-option" data-value="3">
+                                <input type="radio" name="retention_intention" value="3" required>
+                                <span>3</span>
+                            </label>
+                            <label class="scale-option" data-value="4">
+                                <input type="radio" name="retention_intention" value="4" required>
+                                <span>4</span>
+                            </label>
+                            <label class="scale-option" data-value="5">
+                                <input type="radio" name="retention_intention" value="5" required>
+                                <span>5</span>
+                            </label>
+                            <label class="scale-option" data-value="6">
+                                <input type="radio" name="retention_intention" value="6" required>
+                                <span>6</span>
+                            </label>
+                            <label class="scale-option" data-value="7">
+                                <input type="radio" name="retention_intention" value="7" required>
+                                <span>7</span>
+                            </label>
+                            <label class="scale-option" data-value="8">
+                                <input type="radio" name="retention_intention" value="8" required>
+                                <span>8</span>
+                            </label>
+                            <label class="scale-option" data-value="9">
+                                <input type="radio" name="retention_intention" value="9" required>
+                                <span>9</span>
+                            </label>
+                            <label class="scale-option" data-value="10">
+                                <input type="radio" name="retention_intention" value="10" required>
+                                <span>10</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">現在の所属組織であなたはどの程度、活躍貢献できていると感じますか？あなたのお気持ちに最も近しいものをお選びください。</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="contribution" value="活躍貢献できていると感じる" required>
+                            <span>活躍貢献できていると感じる</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="contribution" value="どちらかといえば活躍貢献できていると感じる" required>
+                            <span>どちらかといえば活躍貢献できていると感じる</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="contribution" value="どちらとも言えない" required>
+                            <span>どちらとも言えない</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="contribution" value="どちらかと言えば活躍貢献できていない" required>
+                            <span>どちらかと言えば活躍貢献できていない</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="contribution" value="活躍貢献できていない" required>
+                            <span>活躍貢献できていない</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label required">この会社で働くことを親しい友人や家族にお勧めできますか？（0〜10の11段階評価でご回答ください）</label>
+                    <div class="rating-scale">
+                        <div class="scale-labels">
+                            <span>全くお勧めできない(0)</span>
+                            <span>どちらとも言えない(5)</span>
+                            <span>強くお勧めする(10)</span>
+                        </div>
+                        <div class="scale-options eleven-point">
+                            <label class="scale-option" data-value="0">
+                                <input type="radio" name="nps_score" value="0" required>
+                                <span>0</span>
+                            </label>
+                            <label class="scale-option" data-value="1">
+                                <input type="radio" name="nps_score" value="1" required>
+                                <span>1</span>
+                            </label>
+                            <label class="scale-option" data-value="2">
+                                <input type="radio" name="nps_score" value="2" required>
+                                <span>2</span>
+                            </label>
+                            <label class="scale-option" data-value="3">
+                                <input type="radio" name="nps_score" value="3" required>
+                                <span>3</span>
+                            </label>
+                            <label class="scale-option" data-value="4">
+                                <input type="radio" name="nps_score" value="4" required>
+                                <span>4</span>
+                            </label>
+                            <label class="scale-option" data-value="5">
+                                <input type="radio" name="nps_score" value="5" required>
+                                <span>5</span>
+                            </label>
+                            <label class="scale-option" data-value="6">
+                                <input type="radio" name="nps_score" value="6" required>
+                                <span>6</span>
+                            </label>
+                            <label class="scale-option" data-value="7">
+                                <input type="radio" name="nps_score" value="7" required>
+                                <span>7</span>
+                            </label>
+                            <label class="scale-option" data-value="8">
+                                <input type="radio" name="nps_score" value="8" required>
+                                <span>8</span>
+                            </label>
+                            <label class="scale-option" data-value="9">
+                                <input type="radio" name="nps_score" value="9" required>
+                                <span>9</span>
+                            </label>
+                            <label class="scale-option" data-value="10">
+                                <input type="radio" name="nps_score" value="10" required>
+                                <span>10</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 働き方・時間の柔軟性ページ (ページ5) -->
+        <div class="survey-page" id="page5">
+            <div class="page-header">
+                <h2>働き方・時間の柔軟性</h2>
+                <p class="page-description">以下の各項目について、現在の満足度と今後の期待度をそれぞれお答えください</p>
+            </div>
+            
+            <div class="questions-container">
+                <!-- 勤務時間の適正 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">自分に合った勤務時間で働ける職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="work_time_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="work_time_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="work_time_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="work_time_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="work_time_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="work_time_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="work_time_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="work_time_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="work_time_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="work_time_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 休暇制度 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">休日休暇がちゃんと取れる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="holiday_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="holiday_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="holiday_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="holiday_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="holiday_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="holiday_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="holiday_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="holiday_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="holiday_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="holiday_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 有給休暇 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">有給休暇がちゃんと取れる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="paid_leave_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="paid_leave_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="paid_leave_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="paid_leave_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="paid_leave_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="paid_leave_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="paid_leave_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="paid_leave_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="paid_leave_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="paid_leave_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 勤務形態の柔軟性 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">柔軟な勤務体系（リモートワーク、時短勤務、フレックス制など）のもとで働ける職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="flexible_work_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="flexible_work_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="flexible_work_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="flexible_work_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="flexible_work_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="flexible_work_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="flexible_work_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="flexible_work_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="flexible_work_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="flexible_work_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 通勤負荷 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">自宅から適切な距離で働ける職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="commute_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="commute_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="commute_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="commute_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="commute_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="commute_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="commute_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="commute_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="commute_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="commute_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 労働条件・待遇ページ (ページ6) -->
+        <div class="survey-page" id="page6">
+            <div class="page-header">
+                <h2>労働条件・待遇</h2>
+                <p class="page-description">以下の各項目について、現在の満足度と今後の期待度をそれぞれお答えください</p>
+            </div>
+            
+            <div class="questions-container">
+                <!-- 残業・労働対価 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">残業したらその分しっかり給与が支払われる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="overtime_pay_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="overtime_pay_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="overtime_pay_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="overtime_pay_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="overtime_pay_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="overtime_pay_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="overtime_pay_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="overtime_pay_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="overtime_pay_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="overtime_pay_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 業務量適正 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">自分のキャパシティに合った量の仕事で働ける職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="workload_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="workload_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="workload_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="workload_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="workload_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="workload_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="workload_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="workload_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="workload_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="workload_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 身体的負荷 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">仕事内容や量に対する身体的な負荷が少ない職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="physical_load_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="physical_load_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="physical_load_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="physical_load_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="physical_load_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="physical_load_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="physical_load_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="physical_load_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="physical_load_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="physical_load_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 精神的負荷 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">仕事内容や量に対する精神的な負荷が少ない職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="mental_load_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="mental_load_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="mental_load_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="mental_load_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="mental_load_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="mental_load_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="mental_load_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="mental_load_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="mental_load_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="mental_load_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 福利厚生 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">充実した福利厚生がある職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="benefits_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="benefits_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="benefits_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="benefits_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="benefits_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="benefits_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="benefits_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="benefits_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="benefits_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="benefits_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 報酬・評価ページ (ページ7) -->
+        <div class="survey-page" id="page7">
+            <div class="page-header">
+                <h2>報酬・評価</h2>
+                <p class="page-description">以下の各項目について、現在の満足度と今後の期待度をそれぞれお答えください</p>
+            </div>
+            
+            <div class="questions-container">
+                <!-- 昇給・昇格 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">成果に応じて早期の昇給・昇格が望める職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="promotion_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="promotion_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="promotion_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="promotion_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="promotion_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="promotion_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="promotion_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="promotion_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="promotion_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="promotion_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 正当な評価 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">自身の行った仕事が正当に評価される職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="fair_evaluation_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="fair_evaluation_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="fair_evaluation_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="fair_evaluation_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="fair_evaluation_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="fair_evaluation_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="fair_evaluation_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="fair_evaluation_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="fair_evaluation_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="fair_evaluation_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 妥当な給与 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">同年代や同じ能力の人と比べて妥当な給与がもらえる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="fair_salary_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="fair_salary_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="fair_salary_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="fair_salary_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="fair_salary_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="fair_salary_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="fair_salary_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="fair_salary_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="fair_salary_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="fair_salary_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- キャリア・スキル形成ページ (ページ8) -->
+        <div class="survey-page" id="page8">
+            <div class="page-header">
+                <h2>キャリア・スキル形成</h2>
+                <p class="page-description">以下の各項目について、現在の満足度と今後の期待度をそれぞれお答えください</p>
+            </div>
+            
+            <div class="questions-container">
+                <!-- スキル獲得（専門） -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">専門的なスキルや技術・知識や経験を獲得できる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="professional_skill_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="professional_skill_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="professional_skill_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="professional_skill_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="professional_skill_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="professional_skill_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="professional_skill_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="professional_skill_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="professional_skill_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="professional_skill_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- スキル獲得（汎用） -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">汎用的なスキル（コミュニケーション能力や論理的思考力など）や技術・知識・経験を獲得できる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="general_skill_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="general_skill_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="general_skill_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="general_skill_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="general_skill_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="general_skill_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="general_skill_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="general_skill_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="general_skill_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="general_skill_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 教育制度・研修制度 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">整った教育体制がある職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="education_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="education_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="education_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="education_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="education_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="education_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="education_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="education_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="education_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="education_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- キャリアパス -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">自分に合った将来のキャリアパスをしっかり設計している職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="career_path_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="career_path_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="career_path_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="career_path_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="career_path_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="career_path_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="career_path_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="career_path_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="career_path_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="career_path_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- キャリアの方向性 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">将来自分のなりたいもしくはやりたい方向性とマッチした仕事を任せてもらえる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="career_direction_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="career_direction_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="career_direction_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="career_direction_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="career_direction_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="career_direction_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="career_direction_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="career_direction_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="career_direction_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="career_direction_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ロールモデル -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">身近にロールモデルとなるような人がいる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="role_model_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="role_model_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="role_model_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="role_model_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="role_model_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="role_model_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="role_model_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="role_model_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="role_model_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="role_model_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 仕事内容・やりがいページ (ページ9) -->
+        <div class="survey-page" id="page9">
+            <div class="page-header">
+                <h2>仕事内容・やりがい</h2>
+                <p class="page-description">以下の各項目について、現在の満足度と今後の期待度をそれぞれお答えください</p>
+            </div>
+            
+            <div class="questions-container">
+                <!-- 誇り・社会貢献 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">誇りやプライドを持てるような仕事内容を提供してくれる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="pride_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="pride_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="pride_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="pride_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="pride_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="pride_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="pride_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="pride_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="pride_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="pride_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 社会貢献 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">社会に対して貢献実感を持てるような仕事を任せてもらえる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="social_contribution_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="social_contribution_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="social_contribution_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="social_contribution_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="social_contribution_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="social_contribution_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="social_contribution_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="social_contribution_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="social_contribution_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="social_contribution_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- やりがい・裁量 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">やりがいを感じられるような仕事を任せてもらえる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="fulfillment_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="fulfillment_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="fulfillment_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="fulfillment_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="fulfillment_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="fulfillment_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="fulfillment_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="fulfillment_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="fulfillment_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="fulfillment_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 自分の判断で進められる裁量 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">自分の判断で進められる裁量のある仕事ができる職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="autonomy_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="autonomy_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="autonomy_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="autonomy_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="autonomy_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="autonomy_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="autonomy_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="autonomy_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="autonomy_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="autonomy_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人間関係・マネジメントページ (ページ10) -->
+        <div class="survey-page" id="page10">
+            <div class="page-header">
+                <h2>人間関係・マネジメント</h2>
+                <p class="page-description">以下の各項目について、現在の満足度と今後の期待度をそれぞれお答えください</p>
+            </div>
+            
+            <div class="questions-container">
+                <!-- 人間関係 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">人間関係が良好な職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="relationship_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="relationship_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="relationship_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="relationship_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="relationship_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="relationship_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="relationship_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="relationship_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="relationship_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="relationship_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ハラスメント対策 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">セクハラやパワハラがないような職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="harassment_prevention_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="harassment_prevention_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="harassment_prevention_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="harassment_prevention_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="harassment_prevention_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="harassment_prevention_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="harassment_prevention_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="harassment_prevention_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="harassment_prevention_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="harassment_prevention_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 組織文化・風通し -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">意見や考え方などについて自由に言い合える風通しの良い職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="open_communication_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="open_communication_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="open_communication_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="open_communication_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="open_communication_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="open_communication_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="open_communication_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="open_communication_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="open_communication_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="open_communication_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 組織・経営基盤ページ (ページ11) -->
+        <div class="survey-page" id="page11">
+            <div class="page-header">
+                <h2>組織・経営基盤</h2>
+                <p class="page-description">以下の各項目について、現在の満足度と今後の期待度をそれぞれお答えください</p>
+            </div>
+            
+            <div class="questions-container">
+                <!-- 事業基盤の安心感 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">事業基盤について安心感のある職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="company_stability_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="company_stability_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="company_stability_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="company_stability_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="company_stability_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="company_stability_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="company_stability_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="company_stability_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="company_stability_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="company_stability_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 法令遵守 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">法令遵守が整った職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="compliance_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="compliance_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="compliance_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="compliance_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="compliance_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="compliance_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="compliance_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="compliance_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="compliance_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="compliance_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 働きやすい仕事環境 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">働きやすい仕事環境やオフィス環境の職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="work_environment_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="work_environment_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="work_environment_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="work_environment_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="work_environment_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="work_environment_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="work_environment_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="work_environment_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="work_environment_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="work_environment_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 女性が働きやすい職場 -->
+                <div class="dual-evaluation-group">
+                    <label class="question-main-label required">女性が働きやすい職場</label>
+                    
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【満足度】</span> 現在どの程度満足していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="gender_friendly_satisfaction" value="満足していない" required>
+                                    <span>1<br><small>満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="gender_friendly_satisfaction" value="どちらかと言えば満足していない" required>
+                                    <span>2<br><small>やや満足していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="gender_friendly_satisfaction" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="gender_friendly_satisfaction" value="どちらかと言えば満足している" required>
+                                    <span>4<br><small>やや満足している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="gender_friendly_satisfaction" value="満足している" required>
+                                    <span>5<br><small>満足している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dual-evaluation-item">
+                        <label class="evaluation-label"><span class="evaluation-type">【期待度】</span> 今の会社にどの程度期待していますか？</label>
+                        <div class="dual-scale-container">
+                            <div class="scale-options">
+                                <label class="scale-option" data-value="1">
+                                    <input type="radio" name="gender_friendly_expectation" value="今の会社には期待していない" required>
+                                    <span>1<br><small>期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="2">
+                                    <input type="radio" name="gender_friendly_expectation" value="今の会社にはどちらかと言えば期待していない" required>
+                                    <span>2<br><small>やや期待していない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="3">
+                                    <input type="radio" name="gender_friendly_expectation" value="どちらとも言えない" required>
+                                    <span>3<br><small>どちらとも言えない</small></span>
+                                </label>
+                                <label class="scale-option" data-value="4">
+                                    <input type="radio" name="gender_friendly_expectation" value="今の会社にはどちらかと言えば期待している" required>
+                                    <span>4<br><small>やや期待している</small></span>
+                                </label>
+                                <label class="scale-option" data-value="5">
+                                    <input type="radio" name="gender_friendly_expectation" value="今の会社には期待している" required>
+                                    <span>5<br><small>期待している</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 自由記述ページ (ページ12) -->
+        <div class="survey-page" id="page12">
+            <div class="page-header">
+                <h2>自由記述</h2>
+                <p class="page-description">最後に、ご意見やご要望を自由にお聞かせください</p>
+            </div>
+            <div class="questions-container">
+                <div class="question-group">
+                    <label class="question-label required" id="highestSatisfactionLabel">最も満足度が高い項目について、具体的にお聞かせください</label>
+                    <div class="textarea-container">
+                        <textarea class="textarea-input" name="most_satisfied" placeholder="満足している理由や内容を具体的にお書きください（30文字以上でお書きください）" 
+                                  minlength="30" maxlength="1000" required></textarea>
+                        <div class="char-counter">
+                            <span class="current-chars">0</span>/<span class="min-chars">30</span> 文字 （最大1000文字）
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question-group">
+                    <label class="question-label required" id="lowestSatisfactionLabel">最も満足度が低い項目について、具体的にお聞かせください</label>
+                    <div class="textarea-container">
+                        <textarea class="textarea-input" name="least_satisfied" placeholder="不満に感じる理由や改善を求める内容を具体的にお書きください（30文字以上でお書きください）" 
+                                  minlength="30" maxlength="1000" required></textarea>
+                        <div class="char-counter">
+                            <span class="current-chars">0</span>/<span class="min-chars">30</span> 文字 （最大1000文字）
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question-group">
+                    <label class="question-label required" id="highestExpectationLabel">最も期待度が高い項目について、具体的にお聞かせください</label>
+                    <div class="textarea-container">
+                        <textarea class="textarea-input" name="most_expected" placeholder="期待している改善内容や理由を具体的にお書きください（30文字以上でお書きください）" 
+                                  minlength="30" maxlength="1000" required></textarea>
+                        <div class="char-counter">
+                            <span class="current-chars">0</span>/<span class="min-chars">30</span> 文字 （最大1000文字）
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question-group">
+                    <label class="question-label">その他ご意見・ご要望</label>
+                    <div class="textarea-container">
+                        <textarea class="textarea-input" name="other_comments" placeholder="その他、会社に対するご意見やご要望があれば自由にお書きください（任意回答）" 
+                                  maxlength="1000"></textarea>
+                        <div class="char-counter">
+                            <span class="current-chars">0</span>/1000 文字 （任意回答）
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ナビゲーションボタン -->
+        <div class="navigation-buttons">
+            <button class="nav-button prev-button" id="prevButton" style="display: none;" onclick="previousPage()">
+                ← 前へ
+            </button>
+            <button class="nav-button next-button" id="nextButton" onclick="nextPage()">
+                次へ →
+            </button>
+            <button class="nav-button submit-button" id="submitButton" style="display: none;" onclick="submitSurvey()">
+                🚀 調査を送信
+            </button>
+        </div>
+    </div>
+
+    <!-- 送信完了モーダル -->
+    <div class="modal-overlay" id="completionModal" style="display: none;">
+        <div class="modal-content">
+            <h2>🎉 調査へのご協力ありがとうございました！</h2>
+            <p>あなたの回答は正常に送信されました。<br>貴重なご意見をありがとうございます。</p>
+            <button class="modal-button" onclick="closeModal()">閉じる</button>
+        </div>
+    </div>
+
+    <script src="survey-script.js"></script>
+</body>
+</html>

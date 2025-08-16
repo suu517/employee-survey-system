@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>従業員調査 管理者ダッシュボード</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- ヘッダー -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>📊 従業員調査 管理者ダッシュボード</h1>
+                    <p>Employee Satisfaction Survey Dashboard</p>
+                </div>
+                <div class="header-actions">
+                    <button class="action-button refresh-button" onclick="refreshData()">
+                        🔄 データ更新
+                    </button>
+                    <button class="action-button export-button" onclick="exportData()">
+                        📥 エクスポート
+                    </button>
+                    <a href="index.html" class="action-button survey-button">
+                        📝 調査回答
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- サマリーカード -->
+        <div class="summary-section">
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="card-icon">👥</div>
+                    <div class="card-content">
+                        <div class="card-value" id="totalResponses">150</div>
+                        <div class="card-label">総回答数</div>
+                        <div class="card-change positive">+12 (今週)</div>
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <div class="card-icon">📈</div>
+                    <div class="card-content">
+                        <div class="card-value" id="completionRate">87%</div>
+                        <div class="card-label">回答完了率</div>
+                        <div class="card-change positive">+3.2%</div>
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <div class="card-icon">⭐</div>
+                    <div class="card-content">
+                        <div class="card-value" id="avgSatisfaction">3.6</div>
+                        <div class="card-label">平均満足度</div>
+                        <div class="card-change neutral">+0.1</div>
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-content">
+                        <div class="card-value" id="npsScore">+23</div>
+                        <div class="card-label">NPS スコア</div>
+                        <div class="card-change positive">+5</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- フィルター -->
+        <div class="filters-section">
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="departmentFilter">事業部</label>
+                    <select id="departmentFilter" onchange="applyFilters()">
+                        <option value="all">全体</option>
+                        <option value="営業部">営業部</option>
+                        <option value="マーケティング部">マーケティング部</option>
+                        <option value="開発部">開発部</option>
+                        <option value="人事部">人事部</option>
+                        <option value="経理・財務部">経理・財務部</option>
+                        <option value="総務部">総務部</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="positionFilter">役職</label>
+                    <select id="positionFilter" onchange="applyFilters()">
+                        <option value="all">全体</option>
+                        <option value="一般社員">一般社員</option>
+                        <option value="主任・リーダー">主任・リーダー</option>
+                        <option value="係長・課長代理">係長・課長代理</option>
+                        <option value="課長">課長</option>
+                        <option value="部長">部長</option>
+                        <option value="役員">役員</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="employmentFilter">雇用形態</label>
+                    <select id="employmentFilter" onchange="applyFilters()">
+                        <option value="all">全体</option>
+                        <option value="正社員">正社員</option>
+                        <option value="契約社員">契約社員</option>
+                        <option value="派遣社員">派遣社員</option>
+                        <option value="パート・アルバイト">パート・アルバイト</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="periodFilter">期間</label>
+                    <select id="periodFilter" onchange="applyFilters()">
+                        <option value="all">全期間</option>
+                        <option value="last_month">過去1ヶ月</option>
+                        <option value="last_3months">過去3ヶ月</option>
+                        <option value="last_year">過去1年</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- チャート表示エリア -->
+        <div class="charts-section">
+            <div class="charts-grid">
+                <!-- 総合評価グラフ -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>📊 総合評価分布</h3>
+                        <div class="chart-info">
+                            <span class="info-badge">回答数: 150</span>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="overallSatisfactionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 部署別満足度 -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>🏢 部署別満足度</h3>
+                        <div class="chart-info">
+                            <span class="info-badge">平均値比較</span>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="departmentSatisfactionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 満足度vs期待度 -->
+                <div class="chart-container wide">
+                    <div class="chart-header">
+                        <h3>⚖️ 満足度 vs 期待度 分析</h3>
+                        <div class="chart-info">
+                            <span class="info-badge">ギャップ分析</span>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="satisfactionExpectationChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- トレンド分析 -->
+                <div class="chart-container wide">
+                    <div class="chart-header">
+                        <h3>📈 満足度トレンド</h3>
+                        <div class="chart-info">
+                            <span class="info-badge">時系列分析</span>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 詳細分析セクション -->
+        <div class="analysis-section">
+            <div class="analysis-grid">
+                <!-- 上位満足項目 -->
+                <div class="analysis-card">
+                    <h3>✅ 満足度上位項目</h3>
+                    <div class="ranking-list">
+                        <div class="ranking-item">
+                            <span class="rank">1</span>
+                            <span class="item-text">人間関係が良好な職場</span>
+                            <span class="score">4.2</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="rank">2</span>
+                            <span class="item-text">有給休暇がちゃんと取れる職場</span>
+                            <span class="score">4.1</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="rank">3</span>
+                            <span class="item-text">充実した福利厚生がある職場</span>
+                            <span class="score">4.0</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="rank">4</span>
+                            <span class="item-text">事業基盤について安心感のある会社</span>
+                            <span class="score">3.9</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="rank">5</span>
+                            <span class="item-text">法令遵守が整った会社</span>
+                            <span class="score">3.8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 改善優先項目 -->
+                <div class="analysis-card">
+                    <h3>⚠️ 改善優先項目</h3>
+                    <div class="ranking-list improvement">
+                        <div class="ranking-item">
+                            <span class="rank">1</span>
+                            <span class="item-text">成果に応じて早期の昇給・昇格が望める職場</span>
+                            <span class="score gap">-1.8</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="rank">2</span>
+                            <span class="item-text">自身の行った仕事が正当に評価される職場</span>
+                            <span class="score gap">-1.6</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="rank">3</span>
+                            <span class="item-text">残業したらその分しっかり給与が支払われる職場</span>
+                            <span class="score gap">-1.4</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="rank">4</span>
+                            <span class="item-text">自分のキャパシティーに合った量の仕事で働ける職場</span>
+                            <span class="score gap">-1.3</span>
+                        </div>
+                        <div class="ranking-item">
+                            <span class="rank">5</span>
+                            <span class="item-text">整った教育体制がある職場</span>
+                            <span class="score gap">-1.2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NPSセグメント分析 -->
+                <div class="analysis-card">
+                    <h3>🎯 NPS セグメント分析</h3>
+                    <div class="nps-breakdown">
+                        <div class="nps-segment promoter">
+                            <div class="segment-label">推奨者 (9-10点)</div>
+                            <div class="segment-value">32%</div>
+                            <div class="segment-count">48名</div>
+                        </div>
+                        <div class="nps-segment neutral">
+                            <div class="segment-label">中立者 (7-8点)</div>
+                            <div class="segment-value">59%</div>
+                            <div class="segment-count">89名</div>
+                        </div>
+                        <div class="nps-segment detractor">
+                            <div class="segment-label">批判者 (0-6点)</div>
+                            <div class="segment-value">9%</div>
+                            <div class="segment-count">13名</div>
+                        </div>
+                    </div>
+                    <div class="nps-score-display">
+                        <span class="nps-label">NPS スコア</span>
+                        <span class="nps-value">+23</span>
+                    </div>
+                </div>
+
+                <!-- 自由記述分析 -->
+                <div class="analysis-card wide">
+                    <h3>💬 自由記述 キーワード分析</h3>
+                    <div class="keyword-cloud">
+                        <span class="keyword high">給与・報酬 (78件)</span>
+                        <span class="keyword medium">評価制度 (56件)</span>
+                        <span class="keyword high">労働時間 (45件)</span>
+                        <span class="keyword low">教育・研修 (34件)</span>
+                        <span class="keyword medium">人間関係 (31件)</span>
+                        <span class="keyword low">キャリア (28件)</span>
+                        <span class="keyword medium">福利厚生 (25件)</span>
+                        <span class="keyword low">働き方 (22件)</span>
+                        <span class="keyword medium">上司・管理職 (19件)</span>
+                        <span class="keyword low">職場環境 (16件)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- アクションアイテム -->
+        <div class="actions-section">
+            <div class="actions-container">
+                <h3>🚀 推奨改善アクション</h3>
+                <div class="action-items">
+                    <div class="action-item high-priority">
+                        <div class="priority-badge high">高</div>
+                        <div class="action-content">
+                            <h4>評価制度の透明性向上</h4>
+                            <p>正当な評価に対する不満が最も高い。評価基準の明文化と定期的なフィードバック制度の導入を推奨。</p>
+                            <div class="action-meta">
+                                <span class="estimated-impact">予想効果: 満足度 +0.8pt</span>
+                                <span class="timeline">実施期間: 3-6ヶ月</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-item medium-priority">
+                        <div class="priority-badge medium">中</div>
+                        <div class="action-content">
+                            <h4>残業管理・労働環境の改善</h4>
+                            <p>労働時間と業務量のバランス改善が必要。タスク管理の効率化と適切な人員配置を検討。</p>
+                            <div class="action-meta">
+                                <span class="estimated-impact">予想効果: 満足度 +0.6pt</span>
+                                <span class="timeline">実施期間: 2-4ヶ月</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-item low-priority">
+                        <div class="priority-badge low">低</div>
+                        <div class="action-content">
+                            <h4>教育・研修制度の拡充</h4>
+                            <p>スキルアップ機会への期待が高い。外部研修参加支援やメンタープログラムの導入を検討。</p>
+                            <div class="action-meta">
+                                <span class="estimated-impact">予想効果: 満足度 +0.4pt</span>
+                                <span class="timeline">実施期間: 6-12ヶ月</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
