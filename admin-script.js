@@ -515,3 +515,155 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 });
+
+// URL管理機能
+function openUrlModal() {
+    document.getElementById('urlModal').style.display = 'block';
+    loadSurveyTokens();
+}
+
+function closeUrlModal() {
+    document.getElementById('urlModal').style.display = 'none';
+}
+
+async function createSurveyUrl() {
+    const description = document.getElementById('urlDescription').value;
+    const maxResponses = parseInt(document.getElementById('maxResponses').value);
+    const expiresHours = parseInt(document.getElementById('expiresHours').value);
+    
+    try {
+        const response = await fetch('/api/tokens', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                description,
+                max_responses: maxResponses,
+                expires_hours: expiresHours
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('✅ 調査URLを作成しました', 'success');
+            // フォームをリセット
+            document.getElementById('urlDescription').value = '';
+            document.getElementById('maxResponses').value = '1';
+            document.getElementById('expiresHours').value = '24';
+            // URL一覧を更新
+            loadSurveyTokens();
+        } else {
+            showNotification('❌ URL作成に失敗しました', 'error');
+        }
+    } catch (error) {
+        console.error('URL作成エラー:', error);
+        showNotification('❌ URL作成に失敗しました', 'error');
+    }
+}
+
+async function loadSurveyTokens() {
+    try {
+        const response = await fetch('/api/tokens');
+        const result = await response.json();
+        
+        const container = document.getElementById('urlListContainer');
+        
+        if (result.success && result.tokens.length > 0) {
+            container.innerHTML = result.tokens.map(token => createUrlItemHTML(token)).join('');
+        } else {
+            container.innerHTML = '<div style="text-align: center; color: #6b7280; padding: 20px;">作成されたURLはありません</div>';
+        }
+    } catch (error) {
+        console.error('URL一覧取得エラー:', error);
+        document.getElementById('urlListContainer').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">読み込みに失敗しました</div>';
+    }
+}
+
+function createUrlItemHTML(token) {
+    const now = new Date();
+    const expiresAt = new Date(token.expires_at);
+    const isExpired = now > expiresAt;
+    const isFull = token.current_responses >= token.max_responses;
+    
+    let status = 'active';
+    let statusText = 'アクティブ';
+    
+    if (isExpired) {
+        status = 'expired';
+        statusText = '期限切れ';
+    } else if (isFull) {
+        status = 'full';
+        statusText = '回答完了';
+    } else if (!token.is_active) {
+        status = 'expired';
+        statusText = '無効化済み';
+    }
+    
+    const fullUrl = `${window.location.origin}/survey/${token.token}`;
+    const createdDate = new Date(token.created_at).toLocaleString('ja-JP');
+    const expiresDate = new Date(token.expires_at).toLocaleString('ja-JP');
+    
+    return `
+        <div class="url-item">
+            <div class="url-header">
+                <div class="url-description">${token.description || '説明なし'}</div>
+                <div class="url-status ${status}">${statusText}</div>
+            </div>
+            <div class="url-details">
+                作成日: ${createdDate} | 有効期限: ${expiresDate} | 回答数: ${token.current_responses}/${token.max_responses}
+            </div>
+            <div class="url-link">${fullUrl}</div>
+            <div class="url-actions">
+                <button class="url-action-btn copy-btn" onclick="copyToClipboard('${fullUrl}')">
+                    📋 コピー
+                </button>
+                ${status === 'active' ? `<button class="url-action-btn disable-btn" onclick="disableToken('${token.token}')">無効化</button>` : ''}
+            </div>
+        </div>
+    `;
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showNotification('📋 URLをコピーしました', 'success');
+    }).catch(() => {
+        // フォールバック
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showNotification('📋 URLをコピーしました', 'success');
+    });
+}
+
+async function disableToken(token) {
+    if (!confirm('このURLを無効化しますか？')) return;
+    
+    try {
+        const response = await fetch(`/api/tokens/${token}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            showNotification('✅ URLを無効化しました', 'success');
+            loadSurveyTokens();
+        } else {
+            showNotification('❌ 無効化に失敗しました', 'error');
+        }
+    } catch (error) {
+        console.error('URL無効化エラー:', error);
+        showNotification('❌ 無効化に失敗しました', 'error');
+    }
+}
+
+// モーダル外クリックで閉じる
+window.onclick = function(event) {
+    const modal = document.getElementById('urlModal');
+    if (event.target === modal) {
+        closeUrlModal();
+    }
+}

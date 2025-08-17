@@ -411,6 +411,11 @@ async function submitSurvey() {
 // 実際のAPI送信
 async function submitToServer(data) {
     try {
+        // トークンがある場合は追加
+        if (window.SURVEY_TOKEN) {
+            data.survey_token = window.SURVEY_TOKEN;
+        }
+        
         const response = await fetch('/api/submit', {
             method: 'POST',
             headers: {

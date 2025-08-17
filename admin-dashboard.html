@@ -20,6 +20,9 @@
                     <button class="action-button refresh-button" onclick="refreshData()">
                         🔄 データ更新
                     </button>
+                    <button class="action-button url-button" onclick="openUrlModal()">
+                        🔗 URL管理
+                    </button>
                     <button class="action-button export-button" onclick="exportData()">
                         📥 エクスポート
                     </button>
@@ -331,6 +334,48 @@
                                 <span class="timeline">実施期間: 6-12ヶ月</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- URL管理モーダル -->
+    <div id="urlModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 調査URL管理</h2>
+                <span class="close" onclick="closeUrlModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- URL作成フォーム -->
+                <div class="url-creation-form">
+                    <h3>🚀 新しい調査URL作成</h3>
+                    <div class="form-group">
+                        <label>説明 (任意)</label>
+                        <input type="text" id="urlDescription" placeholder="例: A部署向け調査">
+                    </div>
+                    <div class="form-group">
+                        <label>最大回答数</label>
+                        <input type="number" id="maxResponses" value="1" min="1" max="1000">
+                    </div>
+                    <div class="form-group">
+                        <label>有効期限 (時間)</label>
+                        <select id="expiresHours">
+                            <option value="24">24時間</option>
+                            <option value="72">3日間</option>
+                            <option value="168">1週間</option>
+                            <option value="720">1ヶ月</option>
+                        </select>
+                    </div>
+                    <button class="create-url-btn" onclick="createSurveyUrl()">URL作成</button>
+                </div>
+
+                <!-- URL一覧 -->
+                <div class="url-list">
+                    <h3>📊 作成済みURL一覧</h3>
+                    <div id="urlListContainer">
+                        <div class="loading">読み込み中...</div>
                     </div>
                 </div>
             </div>

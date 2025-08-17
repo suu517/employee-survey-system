@@ -76,7 +76,21 @@ def init_database():
             user_agent TEXT,
             page_load_time INTEGER,
             response_data TEXT NOT NULL,
+            survey_token TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # 調査URL管理テーブル
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS survey_tokens (
+            token TEXT PRIMARY KEY,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP,
+            max_responses INTEGER DEFAULT 1,
+            current_responses INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT 1,
+            description TEXT
         )
     ''')
     
@@ -165,17 +179,44 @@ def submit_survey():
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
         
+        # トークンの検証と回答数更新
+        survey_token = data.get('survey_token')
+        if survey_token:
+            cursor.execute('''
+                SELECT current_responses, max_responses FROM survey_tokens 
+                WHERE token = ? AND is_active = 1
+            ''', (survey_token,))
+            token_info = cursor.fetchone()
+            
+            if not token_info:
+                conn.close()
+                return jsonify({'error': '無効なトークンです'}), 400
+                
+            current_responses, max_responses = token_info
+            if current_responses >= max_responses:
+                conn.close()
+                return jsonify({'error': '回答数上限に達しています'}), 400
+        
         cursor.execute('''
             INSERT INTO survey_responses 
-            (id, submission_time, user_agent, page_load_time, response_data)
-            VALUES (?, ?, ?, ?, ?)
+            (id, submission_time, user_agent, page_load_time, response_data, survey_token)
+            VALUES (?, ?, ?, ?, ?, ?)
         ''', (
             response_id,
             data.get('submission_time'),
             data.get('user_agent'),
             data.get('page_load_time'),
-            json.dumps(data)
+            json.dumps(data),
+            survey_token
         ))
+        
+        # トークンの回答数を更新
+        if survey_token:
+            cursor.execute('''
+                UPDATE survey_tokens 
+                SET current_responses = current_responses + 1
+                WHERE token = ?
+            ''', (survey_token,))
         
         # 自由記述回答を別テーブルに保存
         free_text_fields = {
@@ -385,6 +426,154 @@ def get_free_text_analysis():
         
     except Exception as e:
         logger.error(f"自由記述分析データの取得に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/tokens', methods=['POST'])
+def create_survey_token():
+    """調査URLトークンの作成"""
+    try:
+        data = request.get_json()
+        max_responses = data.get('max_responses', 1)
+        description = data.get('description', '')
+        expires_hours = data.get('expires_hours', 24)
+        
+        # トークン生成
+        token = secrets.token_urlsafe(32)
+        
+        # 有効期限計算
+        from datetime import datetime, timedelta
+        expires_at = datetime.now() + timedelta(hours=expires_hours)
+        
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO survey_tokens (token, expires_at, max_responses, description)
+            VALUES (?, ?, ?, ?)
+        ''', (token, expires_at.isoformat(), max_responses, description))
+        
+        conn.commit()
+        conn.close()
+        
+        survey_url = f"/survey/{token}"
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'survey_url': survey_url,
+            'max_responses': max_responses,
+            'expires_at': expires_at.isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"トークン作成に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/tokens', methods=['GET'])
+def get_survey_tokens():
+    """調査URLトークン一覧取得"""
+    try:
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT token, created_at, expires_at, max_responses, current_responses, is_active, description
+            FROM survey_tokens ORDER BY created_at DESC
+        ''')
+        
+        tokens = []
+        for row in cursor.fetchall():
+            tokens.append({
+                'token': row[0],
+                'created_at': row[1],
+                'expires_at': row[2],
+                'max_responses': row[3],
+                'current_responses': row[4],
+                'is_active': bool(row[5]),
+                'description': row[6]
+            })
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'tokens': tokens
+        })
+        
+    except Exception as e:
+        logger.error(f"トークン一覧取得に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/survey/<token>')
+def survey_with_token(token):
+    """トークン付き調査ページ"""
+    try:
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # トークンの検証
+        cursor.execute('''
+            SELECT expires_at, max_responses, current_responses, is_active
+            FROM survey_tokens WHERE token = ?
+        ''', (token,))
+        
+        token_data = cursor.fetchone()
+        conn.close()
+        
+        if not token_data:
+            return "無効なURLです", 404
+            
+        expires_at, max_responses, current_responses, is_active = token_data
+        
+        # 有効性チェック
+        from datetime import datetime
+        if not is_active:
+            return "このURLは無効化されています", 403
+            
+        if datetime.now() > datetime.fromisoformat(expires_at):
+            return "このURLは有効期限が切れています", 403
+            
+        if current_responses >= max_responses:
+            return "回答数上限に達しています", 403
+        
+        # index.htmlを読み込んでトークンを埋め込み
+        with open('index.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
+            
+        # トークンをJavaScriptに埋め込み
+        html_content = html_content.replace(
+            '<body>',
+            f'<body><script>window.SURVEY_TOKEN = "{token}";</script>'
+        )
+        
+        return html_content
+        
+    except Exception as e:
+        logger.error(f"トークン付き調査ページの表示に失敗しました: {str(e)}")
+        return "サーバーエラーが発生しました", 500
+
+@app.route('/api/tokens/<token>', methods=['DELETE'])
+def disable_survey_token(token):
+    """調査URLトークンの無効化"""
+    try:
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            UPDATE survey_tokens SET is_active = 0 WHERE token = ?
+        ''', (token,))
+        
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({'error': 'トークンが見つかりません'}), 404
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True})
+        
+    except Exception as e:
+        logger.error(f"トークン無効化に失敗しました: {str(e)}")
         return jsonify({'error': 'サーバーエラーが発生しました'}), 500
 
 @app.route('/api/export', methods=['GET'])
