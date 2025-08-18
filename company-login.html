@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企業管理ログイン - 従業員満足度調査システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-section h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .logo-section p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .demo-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .demo-info h4 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .demo-info p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .demo-credentials {
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-section">
+            <h1>🏢 企業管理ログイン</h1>
+            <p>従業員満足度調査システム</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="companyId">企業ID</label>
+                <input type="text" id="companyId" name="companyId" required>
+            </div>
+
+            <div class="form-group">
+                <label for="accessKey">アクセスキー</label>
+                <input type="password" id="accessKey" name="accessKey" required>
+            </div>
+
+            <button type="submit" class="login-btn">ログイン</button>
+        </form>
+
+        <div class="error-message" id="errorMessage">
+            ログイン情報が正しくありません。
+        </div>
+
+        <div class="demo-info">
+            <h4>📝 デモ用ログイン情報</h4>
+            <p>下記の情報でデモ環境にアクセスできます：</p>
+            <div class="demo-credentials">
+                企業ID: demo-company<br>
+                アクセスキー: demo2025
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a href="/">← トップページに戻る</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const companyId = document.getElementById('companyId').value;
+            const accessKey = document.getElementById('accessKey').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // エラーメッセージを非表示
+            errorMessage.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/company/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        company_id: companyId,
+                        access_key: accessKey
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // トークンをセッションストレージに保存
+                    sessionStorage.setItem('companyToken', result.token);
+                    sessionStorage.setItem('companyId', companyId);
+                    
+                    // 企業ダッシュボードにリダイレクト
+                    window.location.href = '/company-dashboard.html';
+                } else {
+                    errorMessage.textContent = result.error || 'ログインに失敗しました';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = 'サーバーエラーが発生しました';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

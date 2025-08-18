@@ -26,6 +26,9 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB制限
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# データベース設定
+DATABASE_PATH = 'survey_database.db'
+
 # セキュリティ関数
 def validate_request_data(data):
     """リクエストデータの検証"""
@@ -59,9 +62,6 @@ def sanitize_input(text):
     import re
     text = re.sub(r'<[^>]+>', '', text)
     return text[:1000]  # 最大1000文字に制限
-
-# データベース設定
-DATABASE_PATH = 'survey_database.db'
 
 def init_database():
     """データベースの初期化"""
@@ -131,6 +131,30 @@ def init_database():
     conn.commit()
     conn.close()
     logger.info("データベースの初期化が完了しました")
+    
+    # デモデータの挿入（初回のみ）
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+    cursor.execute('SELECT COUNT(*) FROM survey_responses')
+    count = cursor.fetchone()[0]
+    conn.close()
+    
+    if count == 0:
+        logger.info("デモデータを挿入しています...")
+        try:
+            import demo_data
+            demo_data.insert_demo_data()
+            logger.info("✅ デモデータの挿入が完了しました")
+        except ImportError:
+            logger.warning("demo_data.pyが見つかりません。デモデータの挿入をスキップします。")
+        except Exception as e:
+            logger.warning(f"デモデータの挿入に失敗しました: {e}")
+
+# アプリケーション起動時にデータベースを初期化
+try:
+    init_database()
+except Exception as e:
+    logger.error(f"データベース初期化エラー: {e}")
 
 @app.route('/')
 def index():
@@ -718,26 +742,945 @@ def update_statistics():
     except Exception as e:
         logger.error(f"統計データの更新に失敗しました: {str(e)}")
 
-if __name__ == '__main__':
-    # データベースの初期化
-    init_database()
-    
-    # デモデータの挿入（初回のみ）
+# ====================
+# 運営者管理用APIエンドポイント
+# ====================
+
+# 運営者認証チェック（簡易版）
+def require_operator_auth(f):
+    """運営者認証が必要なエンドポイントのデコレータ"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # 本格実装時にはJWTトークンやセッション認証を使用
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({'error': '認証が必要です'}), 401
+        
+        # 仮の認証チェック（本格実装時に置き換え）
+        token = auth_header.split(' ')[1]
+        if token != 'operator_demo_token_2025':
+            return jsonify({'error': '無効な認証トークンです'}), 401
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/operator-dashboard.html')
+def operator_dashboard():
+    """運営者ダッシュボード（認証後）"""
+    return send_from_directory('.', 'operator-dashboard.html')
+
+@app.route('/api/operator/overview', methods=['GET'])
+@require_operator_auth
+def get_operator_overview():
+    """運営者向けシステム概要データ"""
+    try:
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # 総回答数
+        cursor.execute('SELECT COUNT(*) FROM survey_responses')
+        total_responses = cursor.fetchone()[0]
+        
+        # アクティブなトークン数
+        cursor.execute('SELECT COUNT(*) FROM survey_tokens WHERE is_active = 1')
+        active_surveys = cursor.fetchone()[0]
+        
+        # 過去30日の回答トレンド
+        cursor.execute('''
+            SELECT DATE(created_at) as date, COUNT(*) as count
+            FROM survey_responses 
+            WHERE created_at >= datetime('now', '-30 days')
+            GROUP BY DATE(created_at)
+            ORDER BY date DESC
+            LIMIT 30
+        ''')
+        
+        daily_responses = cursor.fetchall()
+        
+        conn.close()
+        
+        # サンプルデータで補完
+        overview_data = {
+            'kpis': {
+                'totalCompanies': 127,  # 実装時に企業テーブルから取得
+                'totalResponses': total_responses,
+                'activeSurveys': active_surveys,
+                'monthlyRevenue': 2450000  # 実装時に課金システムから取得
+            },
+            'usageTrend': {
+                'labels': ['30日前', '25日前', '20日前', '15日前', '10日前', '5日前', '今日'],
+                'surveys': [12, 19, 15, 25, 22, 30, len(daily_responses)],
+                'companies': [2, 3, 1, 4, 2, 5, 3]
+            },
+            'companySize': {
+                'labels': ['小規模(1-50人)', '中規模(51-200人)', '大規模(201-1000人)', '超大規模(1000人以上)'],
+                'values': [45, 35, 15, 5]
+            },
+            'systemStatus': {
+                'api': 'online',
+                'database': 'online',
+                'backup': 'online',
+                'load': 'normal'
+            }
+        }
+        
+        return jsonify(overview_data)
+        
+    except Exception as e:
+        logger.error(f"運営者概要データの取得に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/operator/companies', methods=['GET'])
+@require_operator_auth
+def get_operator_companies():
+    """運営者向け企業一覧データ"""
+    try:
+        # 実装時には企業管理テーブルから取得
+        # 現在はサンプルデータを返す
+        companies_data = {
+            'companies': [
+                {
+                    'id': '1',
+                    'name': '株式会社テクノソリューション',
+                    'industry': 'IT・技術',
+                    'size': 150,
+                    'plan': 'premium',
+                    'responses': 1247,
+                    'lastUsed': '2025-08-16',
+                    'status': 'active'
+                },
+                {
+                    'id': '2',
+                    'name': 'グローバル製造業株式会社',
+                    'industry': '製造業',
+                    'size': 3200,
+                    'plan': 'enterprise',
+                    'responses': 2890,
+                    'lastUsed': '2025-08-15',
+                    'status': 'active'
+                },
+                {
+                    'id': '3',
+                    'name': 'フィナンシャルサービス',
+                    'industry': '金融',
+                    'size': 850,
+                    'plan': 'premium',
+                    'responses': 654,
+                    'lastUsed': '2025-08-10',
+                    'status': 'active'
+                }
+            ]
+        }
+        
+        return jsonify(companies_data)
+        
+    except Exception as e:
+        logger.error(f"運営者企業データの取得に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/operator/companies', methods=['POST'])
+@require_operator_auth
+def add_operator_company():
+    """運営者向け企業追加"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': '無効なデータです'}), 400
+        
+        # 必須フィールドの確認
+        required_fields = ['name', 'industry', 'size', 'plan', 'email']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'必須フィールド "{field}" が不足しています'}), 400
+        
+        # 実装時には企業管理テーブルに挿入
+        company_id = str(uuid.uuid4())
+        
+        logger.info(f"新規企業を追加しました: {data['name']} (ID: {company_id})")
+        
+        return jsonify({
+            'success': True,
+            'company_id': company_id,
+            'message': '企業を正常に追加しました'
+        })
+        
+    except Exception as e:
+        logger.error(f"企業追加に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/operator/security', methods=['GET'])
+@require_operator_auth
+def get_operator_security():
+    """運営者向けセキュリティ監視データ"""
+    try:
+        # 実装時にはログ管理システムから取得
+        security_data = {
+            'alerts': [
+                {
+                    'id': '1',
+                    'level': 'low',
+                    'time': '2025-08-17 14:30',
+                    'message': '異常なアクセス頻度を検出（警告レベル）'
+                }
+            ],
+            'accessLogs': [
+                {
+                    'time': '2025-08-17 15:30:45',
+                    'ip': '192.168.1.100',
+                    'endpoint': '/api/submit',
+                    'status': 200,
+                    'userAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                },
+                {
+                    'time': '2025-08-17 15:30:32',
+                    'ip': '10.0.0.50',
+                    'endpoint': '/api/statistics',
+                    'status': 200,
+                    'userAgent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+                }
+            ]
+        }
+        
+        return jsonify(security_data)
+        
+    except Exception as e:
+        logger.error(f"セキュリティデータの取得に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/operator/analytics', methods=['GET'])
+@require_operator_auth
+def get_operator_analytics():
+    """運営者向け全体分析データ"""
+    try:
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # 業界別統計の計算（実際のデータがある場合）
+        cursor.execute('SELECT COUNT(*) FROM survey_responses')
+        total_responses = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        # 業界別ベンチマークデータ（サンプル）
+        analytics_data = {
+            'industryBenchmarks': [
+                {'industry': 'IT・技術', 'satisfaction': 3.8, 'responses': 1247, 'nps': 23},
+                {'industry': '製造業', 'satisfaction': 3.6, 'responses': 892, 'nps': 18},
+                {'industry': '金融', 'satisfaction': 3.5, 'responses': 654, 'nps': 15},
+                {'industry': '小売・サービス', 'satisfaction': 3.4, 'responses': 432, 'nps': 12}
+            ],
+            'satisfactionTrend': {
+                'labels': ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月'],
+                'data': [3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.7]
+            },
+            'totalResponses': total_responses
+        }
+        
+        return jsonify(analytics_data)
+        
+    except Exception as e:
+        logger.error(f"分析データの取得に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/operator/settings', methods=['GET'])
+@require_operator_auth
+def get_operator_settings():
+    """運営者向けシステム設定取得"""
+    try:
+        # 実装時には設定管理テーブルから取得
+        settings = {
+            'maintenanceMode': False,
+            'approvalRequired': True,
+            'defaultResponseLimit': 1000,
+            'rateLimit': 60,
+            'sessionTimeout': 24,
+            'force2FA': False,
+            'backupInterval': 6,
+            'dataRetention': 365
+        }
+        
+        return jsonify(settings)
+        
+    except Exception as e:
+        logger.error(f"設定データの取得に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/operator/settings', methods=['PUT'])
+@require_operator_auth
+def update_operator_settings():
+    """運営者向けシステム設定更新"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': '無効なデータです'}), 400
+        
+        # 実装時には設定管理テーブルを更新
+        logger.info(f"システム設定を更新しました: {data}")
+        
+        return jsonify({
+            'success': True,
+            'message': '設定を正常に更新しました'
+        })
+        
+    except Exception as e:
+        logger.error(f"設定更新に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/operator/backup', methods=['POST'])
+@require_operator_auth
+def trigger_operator_backup():
+    """運営者向けバックアップ実行"""
+    try:
+        # 実装時には実際のバックアップ処理を実行
+        logger.info("手動バックアップを実行しました")
+        
+        return jsonify({
+            'success': True,
+            'message': 'バックアップを開始しました',
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"バックアップ実行に失敗しました: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+# ====================
+# 企業管理用APIエンドポイント
+# ====================
+
+# 企業管理用テーブルの初期化
+def init_company_tables():
+    """企業管理用テーブルの作成"""
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT COUNT(*) FROM survey_responses')
-    count = cursor.fetchone()[0]
+    
+    # 企業アカウントテーブル
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS company_accounts (
+            company_id TEXT PRIMARY KEY,
+            company_name TEXT NOT NULL,
+            access_key TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            is_active BOOLEAN DEFAULT 1,
+            max_urls INTEGER DEFAULT 10,
+            max_responses_per_url INTEGER DEFAULT 1000
+        )
+    ''')
+    
+    # 企業とトークンの関連テーブル
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS company_tokens (
+            company_id TEXT,
+            token TEXT,
+            FOREIGN KEY (company_id) REFERENCES company_accounts (company_id),
+            FOREIGN KEY (token) REFERENCES survey_tokens (token),
+            PRIMARY KEY (company_id, token)
+        )
+    ''')
+    
+    # デモ企業アカウントを作成
+    cursor.execute('SELECT COUNT(*) FROM company_accounts WHERE company_id = ?', ('demo-company',))
+    if cursor.fetchone()[0] == 0:
+        cursor.execute('''
+            INSERT INTO company_accounts (company_id, company_name, access_key)
+            VALUES (?, ?, ?)
+        ''', ('demo-company', 'デモ企業株式会社', 'demo2025'))
+    
+    conn.commit()
     conn.close()
-    
-    if count == 0:
-        logger.info("デモデータを挿入しています...")
+
+# 企業管理用テーブル初期化実行
+try:
+    init_company_tables()
+    logger.info("企業管理用テーブルの初期化が完了しました")
+except Exception as e:
+    logger.error(f"企業管理用テーブル初期化エラー: {e}")
+
+# 企業認証チェック
+def require_company_auth(f):
+    """企業認証が必要なエンドポイントのデコレータ"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({'error': '認証が必要です'}), 401
+        
+        token = auth_header.split(' ')[1]
+        
+        # 簡易トークン検証（実際の運用では JWT などを使用）
+        if not token.startswith('company_'):
+            return jsonify({'error': '無効な認証トークンです'}), 401
+        
+        # トークンから企業IDを取得（簡易実装）
         try:
-            from demo_data import insert_demo_data
-            insert_demo_data()
-            logger.info("✅ デモデータの挿入が完了しました")
-        except Exception as e:
-            logger.warning(f"デモデータの挿入に失敗しました: {e}")
-    
+            company_id = token.split('_')[1]
+            # 企業の存在確認
+            conn = sqlite3.connect(DATABASE_PATH)
+            cursor = conn.cursor()
+            cursor.execute('SELECT company_id FROM company_accounts WHERE company_id = ? AND is_active = 1', (company_id,))
+            if not cursor.fetchone():
+                conn.close()
+                return jsonify({'error': '無効な認証トークンです'}), 401
+            conn.close()
+            
+            # リクエストに企業IDを追加
+            request.company_id = company_id
+            
+        except (IndexError, ValueError):
+            return jsonify({'error': '無効な認証トークンです'}), 401
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/company-login.html')
+def company_login():
+    """企業ログインページ"""
+    return send_from_directory('.', 'company-login.html')
+
+@app.route('/company-dashboard.html')
+def company_dashboard():
+    """企業ダッシュボードページ"""
+    return send_from_directory('.', 'company-dashboard.html')
+
+@app.route('/api/company/login', methods=['POST'])
+def company_login_api():
+    """企業ログインAPI"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': '無効なデータです'}), 400
+        
+        company_id = data.get('company_id')
+        access_key = data.get('access_key')
+        
+        if not company_id or not access_key:
+            return jsonify({'error': '企業IDとアクセスキーが必要です'}), 400
+        
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT company_id, company_name FROM company_accounts 
+            WHERE company_id = ? AND access_key = ? AND is_active = 1
+        ''', (company_id, access_key))
+        
+        company = cursor.fetchone()
+        conn.close()
+        
+        if not company:
+            return jsonify({'error': 'ログイン情報が正しくありません'}), 401
+        
+        # 簡易トークン生成（実際の運用では JWT を使用）
+        token = f"company_{company_id}_{secrets.token_urlsafe(16)}"
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'company_id': company[0],
+            'company_name': company[1]
+        })
+        
+    except Exception as e:
+        logger.error(f"企業ログインエラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/company/summary', methods=['GET'])
+@require_company_auth
+def get_company_summary():
+    """企業管理用サマリーデータ取得"""
+    try:
+        company_id = request.company_id
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # 企業のURL数取得
+        cursor.execute('''
+            SELECT COUNT(*) FROM company_tokens ct
+            JOIN survey_tokens st ON ct.token = st.token
+            WHERE ct.company_id = ? AND st.is_active = 1
+        ''', (company_id,))
+        total_urls = cursor.fetchone()[0]
+        
+        # 企業の総回答数取得
+        cursor.execute('''
+            SELECT SUM(st.current_responses) FROM company_tokens ct
+            JOIN survey_tokens st ON ct.token = st.token
+            WHERE ct.company_id = ?
+        ''', (company_id,))
+        result = cursor.fetchone()
+        total_responses = result[0] if result[0] else 0
+        
+        # 平均満足度計算（サンプル）
+        avg_satisfaction = 3.7  # 実際の計算は省略
+        
+        # 完了率計算（サンプル）
+        completion_rate = 78.5  # 実際の計算は省略
+        
+        conn.close()
+        
+        return jsonify({
+            'totalUrls': total_urls,
+            'totalResponses': total_responses,
+            'avgSatisfaction': avg_satisfaction,
+            'completionRate': completion_rate
+        })
+        
+    except Exception as e:
+        logger.error(f"企業サマリーデータ取得エラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/company/urls', methods=['GET'])
+@require_company_auth
+def get_company_urls():
+    """企業の調査URL一覧取得"""
+    try:
+        company_id = request.company_id
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT st.token, st.created_at, st.expires_at, st.max_responses, 
+                   st.current_responses, st.is_active, st.description
+            FROM company_tokens ct
+            JOIN survey_tokens st ON ct.token = st.token
+            WHERE ct.company_id = ?
+            ORDER BY st.created_at DESC
+        ''', (company_id,))
+        
+        urls = []
+        for row in cursor.fetchall():
+            urls.append({
+                'token': row[0],
+                'created_at': row[1],
+                'expires_at': row[2],
+                'max_responses': row[3],
+                'current_responses': row[4],
+                'is_active': bool(row[5]),
+                'description': row[6]
+            })
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'urls': urls
+        })
+        
+    except Exception as e:
+        logger.error(f"企業URL一覧取得エラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/company/urls', methods=['POST'])
+@require_company_auth
+def create_company_url():
+    """企業用調査URL作成"""
+    try:
+        company_id = request.company_id
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': '無効なデータです'}), 400
+        
+        description = data.get('description', '')
+        max_responses = data.get('max_responses', 50)
+        expires_hours = data.get('expires_hours', 720)
+        
+        # 企業の制限確認
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT max_urls, max_responses_per_url FROM company_accounts 
+            WHERE company_id = ?
+        ''', (company_id,))
+        limits = cursor.fetchone()
+        
+        if not limits:
+            conn.close()
+            return jsonify({'error': '企業情報が見つかりません'}), 404
+        
+        max_urls, max_responses_per_url = limits
+        
+        # 現在のURL数確認
+        cursor.execute('''
+            SELECT COUNT(*) FROM company_tokens ct
+            JOIN survey_tokens st ON ct.token = st.token
+            WHERE ct.company_id = ? AND st.is_active = 1
+        ''', (company_id,))
+        current_url_count = cursor.fetchone()[0]
+        
+        if current_url_count >= max_urls:
+            conn.close()
+            return jsonify({'error': f'URL作成数の上限（{max_urls}個）に達しています'}), 400
+        
+        if max_responses > max_responses_per_url:
+            max_responses = max_responses_per_url
+        
+        # トークン生成
+        token = secrets.token_urlsafe(32)
+        
+        # 有効期限計算
+        from datetime import datetime, timedelta
+        expires_at = datetime.now() + timedelta(hours=expires_hours)
+        
+        # survey_tokensテーブルに挿入
+        cursor.execute('''
+            INSERT INTO survey_tokens (token, expires_at, max_responses, description)
+            VALUES (?, ?, ?, ?)
+        ''', (token, expires_at.isoformat(), max_responses, description))
+        
+        # company_tokensテーブルに関連付け
+        cursor.execute('''
+            INSERT INTO company_tokens (company_id, token)
+            VALUES (?, ?)
+        ''', (company_id, token))
+        
+        conn.commit()
+        conn.close()
+        
+        survey_url = f"/survey/{token}"
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'survey_url': survey_url,
+            'max_responses': max_responses,
+            'expires_at': expires_at.isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"企業URL作成エラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/company/urls/<token>', methods=['DELETE'])
+@require_company_auth
+def disable_company_url(token):
+    """企業用調査URL無効化"""
+    try:
+        company_id = request.company_id
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # 企業がこのトークンを所有しているか確認
+        cursor.execute('''
+            SELECT ct.token FROM company_tokens ct
+            JOIN survey_tokens st ON ct.token = st.token
+            WHERE ct.company_id = ? AND ct.token = ?
+        ''', (company_id, token))
+        
+        if not cursor.fetchone():
+            conn.close()
+            return jsonify({'error': 'URLが見つかりません'}), 404
+        
+        # URL無効化
+        cursor.execute('''
+            UPDATE survey_tokens SET is_active = 0 WHERE token = ?
+        ''', (token,))
+        
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({'error': 'URLの無効化に失敗しました'}), 400
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True})
+        
+    except Exception as e:
+        logger.error(f"企業URL無効化エラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/company/analytics', methods=['GET'])
+@require_company_auth
+def get_company_analytics():
+    """企業用分析データ取得"""
+    try:
+        company_id = request.company_id
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # 企業の回答データから満足度分布を計算（サンプル）
+        satisfaction_distribution = [5, 8, 3, 2, 1]  # 実際は計算が必要
+        
+        # 最近の回答データ（サンプル）
+        recent_responses = [
+            {
+                'timestamp': datetime.now().isoformat(),
+                'satisfaction': 4,
+                'department': '営業部',
+                'position': '主任'
+            },
+            {
+                'timestamp': (datetime.now() - timedelta(hours=2)).isoformat(),
+                'satisfaction': 3,
+                'department': '開発部',
+                'position': '一般社員'
+            }
+        ]
+        
+        conn.close()
+        
+        return jsonify({
+            'satisfactionDistribution': satisfaction_distribution,
+            'recentResponses': recent_responses
+        })
+        
+    except Exception as e:
+        logger.error(f"企業分析データ取得エラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/company/export', methods=['GET'])
+@require_company_auth
+def export_company_data():
+    """企業用データエクスポート"""
+    try:
+        company_id = request.company_id
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # 企業の回答データ取得
+        cursor.execute('''
+            SELECT sr.response_data, sr.created_at
+            FROM company_tokens ct
+            JOIN survey_tokens st ON ct.token = st.token
+            JOIN survey_responses sr ON sr.survey_token = st.token
+            WHERE ct.company_id = ?
+            ORDER BY sr.created_at DESC
+        ''', (company_id,))
+        
+        responses = cursor.fetchall()
+        
+        # CSV生成
+        csv_lines = ['回答ID,回答日時,満足度,部署,役職']
+        
+        for i, (response_data, created_at) in enumerate(responses):
+            try:
+                data = json.loads(response_data)
+                satisfaction = data.get('overall_satisfaction', 'N/A')
+                department = data.get('department', 'N/A')
+                position = data.get('position', 'N/A')
+                
+                csv_lines.append(f'{i+1},{created_at},{satisfaction},{department},{position}')
+            except json.JSONDecodeError:
+                continue
+        
+        csv_data = '\n'.join(csv_lines)
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'csvData': csv_data,
+            'count': len(responses)
+        })
+        
+    except Exception as e:
+        logger.error(f"企業データエクスポートエラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+# ====================
+# 管理者用企業管理APIエンドポイント
+# ====================
+
+@app.route('/api/admin/companies', methods=['GET'])
+def get_admin_companies():
+    """管理者用企業一覧取得"""
+    try:
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # 企業一覧と現在のURL数を取得
+        cursor.execute('''
+            SELECT 
+                ca.company_id,
+                ca.company_name,
+                ca.access_key,
+                ca.max_urls,
+                ca.max_responses_per_url,
+                ca.is_active,
+                ca.created_at,
+                COUNT(ct.token) as current_urls
+            FROM company_accounts ca
+            LEFT JOIN company_tokens ct ON ca.company_id = ct.company_id
+            LEFT JOIN survey_tokens st ON ct.token = st.token AND st.is_active = 1
+            GROUP BY ca.company_id
+            ORDER BY ca.created_at DESC
+        ''')
+        
+        companies = []
+        for row in cursor.fetchall():
+            companies.append({
+                'company_id': row[0],
+                'company_name': row[1],
+                'access_key': row[2],
+                'max_urls': row[3],
+                'max_responses_per_url': row[4],
+                'is_active': bool(row[5]),
+                'created_at': row[6],
+                'current_urls': row[7]
+            })
+        
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'companies': companies
+        })
+        
+    except Exception as e:
+        logger.error(f"管理者用企業一覧取得エラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/admin/companies', methods=['POST'])
+def create_admin_company():
+    """管理者用企業作成"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': '無効なデータです'}), 400
+        
+        company_id = data.get('company_id', '').strip()
+        company_name = data.get('company_name', '').strip()
+        access_key = data.get('access_key', '').strip()
+        max_urls = data.get('max_urls', 10)
+        max_responses_per_url = data.get('max_responses_per_url', 1000)
+        
+        # バリデーション
+        if not company_id or not company_name or not access_key:
+            return jsonify({'error': '必須項目が不足しています'}), 400
+        
+        # 企業ID重複チェック
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT company_id FROM company_accounts WHERE company_id = ?', (company_id,))
+        if cursor.fetchone():
+            conn.close()
+            return jsonify({'error': 'この企業IDは既に使用されています'}), 400
+        
+        # 企業アカウント作成
+        cursor.execute('''
+            INSERT INTO company_accounts 
+            (company_id, company_name, access_key, max_urls, max_responses_per_url)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (company_id, company_name, access_key, max_urls, max_responses_per_url))
+        
+        conn.commit()
+        conn.close()
+        
+        logger.info(f"管理者が企業アカウントを作成しました: {company_id}")
+        
+        return jsonify({
+            'success': True,
+            'company_id': company_id,
+            'message': '企業アカウントを作成しました'
+        })
+        
+    except Exception as e:
+        logger.error(f"管理者用企業作成エラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/admin/companies/<company_id>', methods=['PUT'])
+def update_admin_company(company_id):
+    """管理者用企業更新"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': '無効なデータです'}), 400
+        
+        company_name = data.get('company_name', '').strip()
+        access_key = data.get('access_key', '').strip()
+        max_urls = data.get('max_urls', 10)
+        max_responses_per_url = data.get('max_responses_per_url', 1000)
+        is_active = data.get('is_active', True)
+        
+        if not company_name or not access_key:
+            return jsonify({'error': '必須項目が不足しています'}), 400
+        
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # 企業存在確認
+        cursor.execute('SELECT company_id FROM company_accounts WHERE company_id = ?', (company_id,))
+        if not cursor.fetchone():
+            conn.close()
+            return jsonify({'error': '企業が見つかりません'}), 404
+        
+        # 企業情報更新
+        cursor.execute('''
+            UPDATE company_accounts 
+            SET company_name = ?, access_key = ?, max_urls = ?, 
+                max_responses_per_url = ?, is_active = ?
+            WHERE company_id = ?
+        ''', (company_name, access_key, max_urls, max_responses_per_url, is_active, company_id))
+        
+        conn.commit()
+        conn.close()
+        
+        logger.info(f"管理者が企業情報を更新しました: {company_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': '企業情報を更新しました'
+        })
+        
+    except Exception as e:
+        logger.error(f"管理者用企業更新エラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+@app.route('/api/admin/companies/<company_id>', methods=['DELETE'])
+def delete_admin_company(company_id):
+    """管理者用企業削除"""
+    try:
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # 企業存在確認
+        cursor.execute('SELECT company_id FROM company_accounts WHERE company_id = ?', (company_id,))
+        if not cursor.fetchone():
+            conn.close()
+            return jsonify({'error': '企業が見つかりません'}), 404
+        
+        # 関連するトークンと回答を削除
+        cursor.execute('''
+            DELETE FROM survey_responses 
+            WHERE survey_token IN (
+                SELECT st.token FROM company_tokens ct 
+                JOIN survey_tokens st ON ct.token = st.token 
+                WHERE ct.company_id = ?
+            )
+        ''', (company_id,))
+        
+        cursor.execute('''
+            DELETE FROM survey_tokens 
+            WHERE token IN (
+                SELECT token FROM company_tokens WHERE company_id = ?
+            )
+        ''', (company_id,))
+        
+        cursor.execute('DELETE FROM company_tokens WHERE company_id = ?', (company_id,))
+        cursor.execute('DELETE FROM company_accounts WHERE company_id = ?', (company_id,))
+        
+        conn.commit()
+        conn.close()
+        
+        logger.info(f"管理者が企業を削除しました: {company_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': '企業を削除しました'
+        })
+        
+    except Exception as e:
+        logger.error(f"管理者用企業削除エラー: {str(e)}")
+        return jsonify({'error': 'サーバーエラーが発生しました'}), 500
+
+if __name__ == '__main__':
     # 本番環境の設定
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV') == 'development'

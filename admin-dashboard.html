@@ -33,8 +33,18 @@
             </div>
         </header>
 
-        <!-- サマリーカード -->
-        <div class="summary-section">
+        <!-- タブナビゲーション -->
+        <nav class="tab-navigation">
+            <button class="tab-btn active" onclick="showTab('dashboard')">📊 ダッシュボード</button>
+            <button class="tab-btn" onclick="showTab('companies')">🏢 企業管理</button>
+        </nav>
+
+        <!-- タブコンテンツ -->
+        <div class="tab-content-container">
+            <!-- ダッシュボードタブ -->
+            <div id="dashboard" class="tab-content active">
+                <!-- サマリーカード -->
+                <div class="summary-section">
             <div class="summary-cards">
                 <div class="summary-card">
                     <div class="card-icon">👥</div>
@@ -295,6 +305,334 @@
             </div>
         </div>
 
+        <!-- 15カテゴリ詳細分析セクション -->
+        <div class="categories-section">
+            <div class="section-header">
+                <h2>📋 15カテゴリ詳細分析</h2>
+                <div class="section-controls">
+                    <div class="view-toggle">
+                        <button class="toggle-btn active" onclick="switchCategoryView('overview')" id="overviewToggle">概要</button>
+                        <button class="toggle-btn" onclick="switchCategoryView('detailed')" id="detailedToggle">詳細</button>
+                        <button class="toggle-btn" onclick="switchCategoryView('comparison')" id="comparisonToggle">比較</button>
+                    </div>
+                    <div class="analysis-filters">
+                        <select id="categoryFilter" onchange="updateCategoryView()">
+                            <option value="all">全カテゴリ</option>
+                            <option value="worklife_balance">勤務時間・働き方</option>
+                            <option value="compensation">待遇・評価</option>
+                            <option value="workload_stress">業務量・ストレス</option>
+                            <option value="growth_development">成長・能力開発</option>
+                            <option value="job_satisfaction">仕事のやりがい</option>
+                            <option value="relationships_culture">人間関係・企業文化</option>
+                            <option value="company_business">会社・事業</option>
+                        </select>
+                        <button class="export-category-btn" onclick="exportCategoryData()">📊 データ出力</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- カテゴリ概要ビュー -->
+            <div id="categoryOverviewView" class="category-view active">
+                <div class="category-cards-grid">
+                    <!-- 勤務時間・働き方 -->
+                    <div class="category-card" data-category="worklife_balance">
+                        <div class="category-header">
+                            <h3>🕒 勤務時間・働き方</h3>
+                            <div class="category-scores">
+                                <span class="satisfaction-score">満足度: 3.4</span>
+                                <span class="expectation-score">期待度: 4.2</span>
+                                <span class="gap-score negative">ギャップ: -0.8</span>
+                            </div>
+                        </div>
+                        <div class="category-chart-mini">
+                            <canvas id="worklifeBalanceChart"></canvas>
+                        </div>
+                        <div class="category-summary">
+                            <div class="top-item positive">👍 残業時間の適正さ (3.8)</div>
+                            <div class="bottom-item negative">👎 フレキシブルな働き方 (2.9)</div>
+                        </div>
+                    </div>
+
+                    <!-- 待遇・評価 -->
+                    <div class="category-card" data-category="compensation">
+                        <div class="category-header">
+                            <h3>💰 待遇・評価</h3>
+                            <div class="category-scores">
+                                <span class="satisfaction-score">満足度: 3.1</span>
+                                <span class="expectation-score">期待度: 4.5</span>
+                                <span class="gap-score negative">ギャップ: -1.4</span>
+                            </div>
+                        </div>
+                        <div class="category-chart-mini">
+                            <canvas id="compensationChart"></canvas>
+                        </div>
+                        <div class="category-summary">
+                            <div class="top-item positive">👍 福利厚生の充実 (3.6)</div>
+                            <div class="bottom-item negative">👎 昇給・昇格制度 (2.4)</div>
+                        </div>
+                    </div>
+
+                    <!-- 業務量・ストレス -->
+                    <div class="category-card" data-category="workload_stress">
+                        <div class="category-header">
+                            <h3>⚡ 業務量・ストレス</h3>
+                            <div class="category-scores">
+                                <span class="satisfaction-score">満足度: 3.2</span>
+                                <span class="expectation-score">期待度: 4.1</span>
+                                <span class="gap-score negative">ギャップ: -0.9</span>
+                            </div>
+                        </div>
+                        <div class="category-chart-mini">
+                            <canvas id="workloadStressChart"></canvas>
+                        </div>
+                        <div class="category-summary">
+                            <div class="top-item positive">👍 精神的負荷の適正さ (3.5)</div>
+                            <div class="bottom-item negative">👎 業務量の適正さ (2.8)</div>
+                        </div>
+                    </div>
+
+                    <!-- 成長・能力開発 -->
+                    <div class="category-card" data-category="growth_development">
+                        <div class="category-header">
+                            <h3>📈 成長・能力開発</h3>
+                            <div class="category-scores">
+                                <span class="satisfaction-score">満足度: 3.0</span>
+                                <span class="expectation-score">期待度: 4.3</span>
+                                <span class="gap-score negative">ギャップ: -1.3</span>
+                            </div>
+                        </div>
+                        <div class="category-chart-mini">
+                            <canvas id="growthDevelopmentChart"></canvas>
+                        </div>
+                        <div class="category-summary">
+                            <div class="top-item positive">👍 実務経験による成長 (3.4)</div>
+                            <div class="bottom-item negative">👎 教育研修制度 (2.5)</div>
+                        </div>
+                    </div>
+
+                    <!-- 仕事のやりがい -->
+                    <div class="category-card" data-category="job_satisfaction">
+                        <div class="category-header">
+                            <h3>⭐ 仕事のやりがい</h3>
+                            <div class="category-scores">
+                                <span class="satisfaction-score">満足度: 3.6</span>
+                                <span class="expectation-score">期待度: 4.1</span>
+                                <span class="gap-score negative">ギャップ: -0.5</span>
+                            </div>
+                        </div>
+                        <div class="category-chart-mini">
+                            <canvas id="jobSatisfactionChart"></canvas>
+                        </div>
+                        <div class="category-summary">
+                            <div class="top-item positive">👍 社会貢献実感 (4.0)</div>
+                            <div class="bottom-item negative">👎 裁量の大きさ (3.1)</div>
+                        </div>
+                    </div>
+
+                    <!-- 人間関係・企業文化 -->
+                    <div class="category-card" data-category="relationships_culture">
+                        <div class="category-header">
+                            <h3>👥 人間関係・企業文化</h3>
+                            <div class="category-scores">
+                                <span class="satisfaction-score">満足度: 3.8</span>
+                                <span class="expectation-score">期待度: 4.0</span>
+                                <span class="gap-score negative">ギャップ: -0.2</span>
+                            </div>
+                        </div>
+                        <div class="category-chart-mini">
+                            <canvas id="relationshipsCultureChart"></canvas>
+                        </div>
+                        <div class="category-summary">
+                            <div class="top-item positive">👍 同僚との関係性 (4.1)</div>
+                            <div class="bottom-item negative">👎 風通しの良さ (3.4)</div>
+                        </div>
+                    </div>
+
+                    <!-- 会社・事業 -->
+                    <div class="category-card" data-category="company_business">
+                        <div class="category-header">
+                            <h3>🏢 会社・事業</h3>
+                            <div class="category-scores">
+                                <span class="satisfaction-score">満足度: 3.7</span>
+                                <span class="expectation-score">期待度: 3.9</span>
+                                <span class="gap-score negative">ギャップ: -0.2</span>
+                            </div>
+                        </div>
+                        <div class="category-chart-mini">
+                            <canvas id="companyBusinessChart"></canvas>
+                        </div>
+                        <div class="category-summary">
+                            <div class="top-item positive">👍 事業基盤の安定性 (4.0)</div>
+                            <div class="bottom-item negative">👎 競合優位性 (3.3)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- カテゴリ詳細ビュー -->
+            <div id="categoryDetailedView" class="category-view">
+                <div class="detailed-analysis-grid">
+                    <!-- 満足度vs期待度散布図 -->
+                    <div class="analysis-chart-container">
+                        <div class="chart-header">
+                            <h3>📊 満足度 vs 期待度 散布図</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item high">高優先 (期待度高・満足度低)</span>
+                                <span class="legend-item maintain">維持 (期待度高・満足度高)</span>
+                                <span class="legend-item monitor">監視 (期待度低・満足度低)</span>
+                                <span class="legend-item stable">安定 (期待度低・満足度高)</span>
+                            </div>
+                        </div>
+                        <div class="chart-content">
+                            <canvas id="satisfactionExpectationScatter"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- カテゴリ別レーダーチャート -->
+                    <div class="analysis-chart-container">
+                        <div class="chart-header">
+                            <h3>🎯 カテゴリ別レーダーチャート</h3>
+                            <div class="radar-controls">
+                                <label>
+                                    <input type="checkbox" id="showSatisfaction" checked onchange="updateRadarChart()"> 満足度
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="showExpectation" checked onchange="updateRadarChart()"> 期待度
+                                </label>
+                            </div>
+                        </div>
+                        <div class="chart-content">
+                            <canvas id="categoryRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- ギャップ分析ヒートマップ -->
+                    <div class="analysis-chart-container wide">
+                        <div class="chart-header">
+                            <h3>🌡️ 満足度・期待度ギャップ ヒートマップ</h3>
+                            <div class="heatmap-legend">
+                                <span class="heatmap-scale">
+                                    <span class="scale-item" style="background: #d73027">-2.0</span>
+                                    <span class="scale-item" style="background: #f46d43">-1.5</span>
+                                    <span class="scale-item" style="background: #fdae61">-1.0</span>
+                                    <span class="scale-item" style="background: #fee08b">-0.5</span>
+                                    <span class="scale-item" style="background: #ffffbf">0.0</span>
+                                    <span class="scale-item" style="background: #d9ef8b">+0.5</span>
+                                    <span class="scale-item" style="background: #a6d96a">+1.0</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="heatmap-container">
+                            <div id="categoryHeatmap"></div>
+                        </div>
+                    </div>
+
+                    <!-- 改善優先度マトリックス -->
+                    <div class="analysis-chart-container">
+                        <div class="chart-header">
+                            <h3>🚀 改善優先度マトリックス</h3>
+                            <div class="matrix-description">
+                                横軸: 改善難易度 / 縦軸: 影響度
+                            </div>
+                        </div>
+                        <div class="chart-content">
+                            <canvas id="improvementMatrix"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- トレンド分析 -->
+                    <div class="analysis-chart-container">
+                        <div class="chart-header">
+                            <h3>📈 カテゴリ別トレンド分析</h3>
+                            <div class="trend-controls">
+                                <select id="trendPeriod" onchange="updateTrendChart()">
+                                    <option value="3months">過去3ヶ月</option>
+                                    <option value="6months">過去6ヶ月</option>
+                                    <option value="1year">過去1年</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-content">
+                            <canvas id="categoryTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- カテゴリ比較ビュー -->
+            <div id="categoryComparisonView" class="category-view">
+                <div class="comparison-controls">
+                    <div class="comparison-selectors">
+                        <div class="selector-group">
+                            <label>比較対象A</label>
+                            <select id="comparisonA">
+                                <option value="all">全体平均</option>
+                                <option value="dept_sales">営業部</option>
+                                <option value="dept_dev">開発部</option>
+                                <option value="dept_marketing">マーケティング部</option>
+                            </select>
+                        </div>
+                        <div class="selector-group">
+                            <label>比較対象B</label>
+                            <select id="comparisonB">
+                                <option value="dept_sales" selected>営業部</option>
+                                <option value="dept_dev">開発部</option>
+                                <option value="dept_marketing">マーケティング部</option>
+                            </select>
+                        </div>
+                        <button class="compare-btn" onclick="updateComparison()">比較実行</button>
+                    </div>
+                </div>
+
+                <div class="comparison-results">
+                    <!-- 比較レーダーチャート -->
+                    <div class="comparison-chart-container">
+                        <div class="chart-header">
+                            <h3>📊 カテゴリ別比較レーダー</h3>
+                        </div>
+                        <div class="chart-content">
+                            <canvas id="comparisonRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 比較差分チャート -->
+                    <div class="comparison-chart-container">
+                        <div class="chart-header">
+                            <h3>📈 カテゴリ別差分チャート</h3>
+                        </div>
+                        <div class="chart-content">
+                            <canvas id="comparisonDifferenceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 比較データテーブル -->
+                    <div class="comparison-table-container">
+                        <div class="chart-header">
+                            <h3>📋 詳細比較データ</h3>
+                        </div>
+                        <div class="comparison-table-wrapper">
+                            <table class="comparison-table" id="comparisonDataTable">
+                                <thead>
+                                    <tr>
+                                        <th>カテゴリ</th>
+                                        <th>対象A 満足度</th>
+                                        <th>対象A 期待度</th>
+                                        <th>対象B 満足度</th>
+                                        <th>対象B 期待度</th>
+                                        <th>満足度差分</th>
+                                        <th>期待度差分</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comparisonTableBody">
+                                    <!-- データはJavaScriptで挿入 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- アクションアイテム -->
         <div class="actions-section">
             <div class="actions-container">
@@ -336,6 +674,123 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+            </div>
+
+            <!-- 企業管理タブ -->
+            <div id="companies" class="tab-content">
+                <div class="companies-section">
+                    <div class="section-header">
+                        <h2>🏢 企業アカウント管理</h2>
+                        <button class="action-button add-company-btn" onclick="showAddCompanyModal()">
+                            ➕ 新規企業追加
+                        </button>
+                    </div>
+
+                    <!-- 企業一覧 -->
+                    <div class="companies-list">
+                        <div class="companies-table-container">
+                            <table class="companies-table">
+                                <thead>
+                                    <tr>
+                                        <th>企業ID</th>
+                                        <th>企業名</th>
+                                        <th>アクセスキー</th>
+                                        <th>URL発行上限</th>
+                                        <th>現在のURL数</th>
+                                        <th>状態</th>
+                                        <th>作成日</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="companiesTableBody">
+                                    <tr>
+                                        <td colspan="8" class="loading">読み込み中...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新規企業追加モーダル -->
+    <div id="addCompanyModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏢 新規企業追加</h2>
+                <span class="close" onclick="closeAddCompanyModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>企業ID <span class="required">*</span></label>
+                    <input type="text" id="newCompanyId" placeholder="例: abc-corporation" required>
+                    <small>英数字とハイフンのみ使用可能</small>
+                </div>
+                <div class="form-group">
+                    <label>企業名 <span class="required">*</span></label>
+                    <input type="text" id="newCompanyName" placeholder="例: 株式会社ABC" required>
+                </div>
+                <div class="form-group">
+                    <label>アクセスキー <span class="required">*</span></label>
+                    <input type="text" id="newAccessKey" placeholder="例: secure123456" required>
+                    <small>企業側ログインで使用するパスワード</small>
+                </div>
+                <div class="form-group">
+                    <label>URL発行上限</label>
+                    <input type="number" id="newMaxUrls" value="10" min="1" max="100">
+                    <small>この企業が作成できるURL数の上限</small>
+                </div>
+                <div class="form-group">
+                    <label>1URL当たりの回答上限</label>
+                    <input type="number" id="newMaxResponsesPerUrl" value="1000" min="1" max="10000">
+                    <small>1つのURLで受け取れる回答数の上限</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeAddCompanyModal()">キャンセル</button>
+                <button class="submit-btn" onclick="createCompanyAccount()">企業を追加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 企業編集モーダル -->
+    <div id="editCompanyModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ 企業情報編集</h2>
+                <span class="close" onclick="closeEditCompanyModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editCompanyId">
+                <div class="form-group">
+                    <label>企業名 <span class="required">*</span></label>
+                    <input type="text" id="editCompanyName" required>
+                </div>
+                <div class="form-group">
+                    <label>アクセスキー <span class="required">*</span></label>
+                    <input type="text" id="editAccessKey" required>
+                </div>
+                <div class="form-group">
+                    <label>URL発行上限</label>
+                    <input type="number" id="editMaxUrls" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label>1URL当たりの回答上限</label>
+                    <input type="number" id="editMaxResponsesPerUrl" min="1" max="10000">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="editIsActive"> アカウントを有効化
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeEditCompanyModal()">キャンセル</button>
+                <button class="submit-btn" onclick="updateCompanyAccount()">更新</button>
             </div>
         </div>
     </div>

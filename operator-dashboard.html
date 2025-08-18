@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>運営者管理ダッシュボード - 従業員満足度調査システム</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="operator-style.css">
+</head>
+<body>
+    <div class="operator-container">
+        <!-- ヘッダー -->
+        <header class="operator-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>🛠️ 運営者管理ダッシュボード</h1>
+                    <p class="system-subtitle">Employee Survey System - Operator Control Panel</p>
+                </div>
+                <div class="operator-info">
+                    <span class="operator-name">システム運営者</span>
+                    <button class="logout-btn" onclick="logout()">ログアウト</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ナビゲーションタブ -->
+        <nav class="tab-navigation">
+            <button class="tab-btn active" onclick="showTab('overview')">📊 システム概要</button>
+            <button class="tab-btn" onclick="showTab('companies')">🏢 企業管理</button>
+            <button class="tab-btn" onclick="showTab('analytics')">📈 全体分析</button>
+            <button class="tab-btn" onclick="showTab('security')">🔒 セキュリティ</button>
+            <button class="tab-btn" onclick="showTab('system')">⚙️ システム設定</button>
+        </nav>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            
+            <!-- システム概要タブ -->
+            <div id="overview" class="tab-content active">
+                <div class="section-header">
+                    <h2>📊 システム全体概要</h2>
+                    <div class="last-updated">最終更新: <span id="lastUpdated">--</span></div>
+                </div>
+
+                <!-- KPIカード -->
+                <div class="kpi-cards">
+                    <div class="kpi-card">
+                        <div class="kpi-icon">🏢</div>
+                        <div class="kpi-content">
+                            <h3>登録企業数</h3>
+                            <div class="kpi-value" id="totalCompanies">--</div>
+                            <div class="kpi-change positive">+5 (今月)</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon">📝</div>
+                        <div class="kpi-content">
+                            <h3>総回答数</h3>
+                            <div class="kpi-value" id="totalResponses">--</div>
+                            <div class="kpi-change positive">+247 (今日)</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon">🎯</div>
+                        <div class="kpi-content">
+                            <h3>アクティブ調査</h3>
+                            <div class="kpi-value" id="activeSurveys">--</div>
+                            <div class="kpi-change neutral">12 進行中</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon">💰</div>
+                        <div class="kpi-content">
+                            <h3>月間収益</h3>
+                            <div class="kpi-value" id="monthlyRevenue">--</div>
+                            <div class="kpi-change positive">+8.5% (前月比)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- チャートエリア -->
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>📈 利用状況トレンド（過去30日）</h3>
+                        <canvas id="usageTrendChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>🏢 企業規模別分布</h3>
+                        <canvas id="companySizeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- システムステータス -->
+                <div class="system-status">
+                    <h3>🔧 システムステータス</h3>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <span class="status-label">APIサーバー</span>
+                            <span class="status-indicator online">オンライン</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">データベース</span>
+                            <span class="status-indicator online">正常</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">バックアップ</span>
+                            <span class="status-indicator online">完了 (2時間前)</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">負荷状況</span>
+                            <span class="status-indicator warning">中程度 (67%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 企業管理タブ -->
+            <div id="companies" class="tab-content">
+                <div class="section-header">
+                    <h2>🏢 企業管理</h2>
+                    <button class="add-btn" onclick="showAddCompanyModal()">+ 新規企業追加</button>
+                </div>
+
+                <!-- 検索・フィルター -->
+                <div class="search-filter">
+                    <input type="text" id="companySearch" placeholder="企業名で検索..." onkeyup="filterCompanies()">
+                    <select id="companyFilter" onchange="filterCompanies()">
+                        <option value="">全ての企業</option>
+                        <option value="active">アクティブ</option>
+                        <option value="inactive">非アクティブ</option>
+                        <option value="trial">トライアル</option>
+                    </select>
+                </div>
+
+                <!-- 企業一覧テーブル -->
+                <div class="table-container">
+                    <table class="data-table" id="companiesTable">
+                        <thead>
+                            <tr>
+                                <th>企業名</th>
+                                <th>業界</th>
+                                <th>従業員数</th>
+                                <th>プラン</th>
+                                <th>回答数</th>
+                                <th>最終利用</th>
+                                <th>ステータス</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companiesTableBody">
+                            <!-- データは JavaScript で挿入 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 全体分析タブ -->
+            <div id="analytics" class="tab-content">
+                <div class="section-header">
+                    <h2>📈 全体分析・ベンチマーク</h2>
+                    <div class="analytics-controls">
+                        <select id="analyticsTimeframe">
+                            <option value="7">過去7日</option>
+                            <option value="30" selected>過去30日</option>
+                            <option value="90">過去3ヶ月</option>
+                            <option value="365">過去1年</option>
+                        </select>
+                        <button class="export-btn" onclick="exportAnalytics()">📊 レポート出力</button>
+                    </div>
+                </div>
+
+                <!-- 業界別ベンチマーク -->
+                <div class="benchmark-section">
+                    <h3>🏭 業界別満足度ベンチマーク</h3>
+                    <div class="benchmark-grid">
+                        <div class="benchmark-card">
+                            <h4>IT・技術</h4>
+                            <div class="benchmark-score">3.8</div>
+                            <div class="benchmark-details">平均満足度 | 1,247回答</div>
+                        </div>
+                        <div class="benchmark-card">
+                            <h4>製造業</h4>
+                            <div class="benchmark-score">3.6</div>
+                            <div class="benchmark-details">平均満足度 | 892回答</div>
+                        </div>
+                        <div class="benchmark-card">
+                            <h4>金融</h4>
+                            <div class="benchmark-score">3.5</div>
+                            <div class="benchmark-details">平均満足度 | 654回答</div>
+                        </div>
+                        <div class="benchmark-card">
+                            <h4>小売・サービス</h4>
+                            <div class="benchmark-score">3.4</div>
+                            <div class="benchmark-details">平均満足度 | 432回答</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分析チャート -->
+                <div class="analytics-charts">
+                    <div class="chart-container">
+                        <h3>📊 業界別NPS分布</h3>
+                        <canvas id="industryNPSChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>📈 満足度トレンド分析</h3>
+                        <canvas id="satisfactionTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- セキュリティタブ -->
+            <div id="security" class="tab-content">
+                <div class="section-header">
+                    <h2>🔒 セキュリティ監視</h2>
+                    <div class="security-status">
+                        <span class="security-indicator secure">🟢 セキュア</span>
+                    </div>
+                </div>
+
+                <!-- セキュリティアラート -->
+                <div class="security-alerts">
+                    <h3>⚠️ セキュリティアラート</h3>
+                    <div class="alert-list" id="securityAlerts">
+                        <div class="alert-item low">
+                            <span class="alert-time">2025-08-17 14:30</span>
+                            <span class="alert-message">異常なアクセス頻度を検出（警告レベル）</span>
+                            <button class="alert-dismiss">無視</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- アクセスログ -->
+                <div class="access-logs">
+                    <h3>📋 アクセスログ（直近100件）</h3>
+                    <div class="log-container">
+                        <table class="log-table">
+                            <thead>
+                                <tr>
+                                    <th>時刻</th>
+                                    <th>IPアドレス</th>
+                                    <th>エンドポイント</th>
+                                    <th>ステータス</th>
+                                    <th>User-Agent</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accessLogBody">
+                                <!-- ログデータは JavaScript で挿入 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- システム設定タブ -->
+            <div id="system" class="tab-content">
+                <div class="section-header">
+                    <h2>⚙️ システム設定</h2>
+                </div>
+
+                <div class="settings-grid">
+                    <!-- 一般設定 -->
+                    <div class="settings-section">
+                        <h3>🔧 一般設定</h3>
+                        <div class="setting-item">
+                            <label>システムメンテナンスモード</label>
+                            <label class="switch">
+                                <input type="checkbox" id="maintenanceMode">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>新規企業登録の承認制</label>
+                            <label class="switch">
+                                <input type="checkbox" id="approvalRequired" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>デフォルト回答制限数</label>
+                            <input type="number" id="defaultResponseLimit" value="1000" min="1">
+                        </div>
+                    </div>
+
+                    <!-- セキュリティ設定 -->
+                    <div class="settings-section">
+                        <h3>🔐 セキュリティ設定</h3>
+                        <div class="setting-item">
+                            <label>レート制限（リクエスト/分）</label>
+                            <input type="number" id="rateLimit" value="60" min="1">
+                        </div>
+                        <div class="setting-item">
+                            <label>セッション有効期限（時間）</label>
+                            <input type="number" id="sessionTimeout" value="24" min="1">
+                        </div>
+                        <div class="setting-item">
+                            <label>二要素認証の強制</label>
+                            <label class="switch">
+                                <input type="checkbox" id="force2FA">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- データ管理設定 -->
+                    <div class="settings-section">
+                        <h3>💾 データ管理</h3>
+                        <div class="setting-item">
+                            <label>自動バックアップ間隔（時間）</label>
+                            <input type="number" id="backupInterval" value="6" min="1">
+                        </div>
+                        <div class="setting-item">
+                            <label>データ保持期間（日）</label>
+                            <input type="number" id="dataRetention" value="365" min="30">
+                        </div>
+                        <button class="backup-btn" onclick="triggerBackup()">🗄️ 今すぐバックアップ</button>
+                    </div>
+                </div>
+
+                <!-- 設定保存 -->
+                <div class="settings-actions">
+                    <button class="save-btn" onclick="saveSettings()">設定を保存</button>
+                    <button class="reset-btn" onclick="resetSettings()">デフォルトに戻す</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- モーダル：新規企業追加 -->
+    <div id="addCompanyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>新規企業追加</h3>
+                <span class="modal-close" onclick="closeModal('addCompanyModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addCompanyForm">
+                    <div class="form-group">
+                        <label>企業名</label>
+                        <input type="text" id="companyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>業界</label>
+                        <select id="companyIndustry" required>
+                            <option value="">選択してください</option>
+                            <option value="technology">IT・技術</option>
+                            <option value="manufacturing">製造業</option>
+                            <option value="finance">金融</option>
+                            <option value="retail">小売・サービス</option>
+                            <option value="healthcare">医療・介護</option>
+                            <option value="education">教育</option>
+                            <option value="other">その他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>従業員数</label>
+                        <input type="number" id="companySize" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>プラン</label>
+                        <select id="companyPlan" required>
+                            <option value="trial">トライアル</option>
+                            <option value="basic">ベーシック</option>
+                            <option value="premium">プレミアム</option>
+                            <option value="enterprise">エンタープライズ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>担当者メールアドレス</label>
+                        <input type="email" id="companyEmail" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeModal('addCompanyModal')">キャンセル</button>
+                <button class="submit-btn" onclick="addCompany()">追加</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="operator-script.js"></script>
+</body>
+</html>

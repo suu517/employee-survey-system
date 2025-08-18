@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>運営者ログイン - 従業員満足度調査システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 400px;
+            width: 100%;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .login-form {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2c3e50;
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        .login-button {
+            width: 100%;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(44, 62, 80, 0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .demo-login {
+            background: #e74c3c;
+            margin-top: 1rem;
+        }
+
+        .demo-login:hover {
+            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.3);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.error {
+            background: #fee;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+
+        .alert.success {
+            background: #f0fff4;
+            color: #2f855a;
+            border: 1px solid #c6f6d5;
+        }
+
+        .demo-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid #3498db;
+        }
+
+        .demo-info h4 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .demo-info p {
+            color: #64748b;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .back-link a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link a:hover {
+            color: #2c3e50;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 10px;
+            }
+            
+            .login-header {
+                padding: 1.5rem;
+            }
+            
+            .login-form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🛠️ 運営者ログイン</h1>
+            <p>System Operator Access</p>
+        </div>
+        
+        <div class="login-form">
+            <div id="alertMessage" class="alert"></div>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">ユーザー名</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="login-button">ログイン</button>
+            </form>
+            
+            <button type="button" class="login-button demo-login" onclick="demoLogin()">
+                デモログイン（開発用）
+            </button>
+            
+            <div class="demo-info">
+                <h4>📝 デモ用認証情報</h4>
+                <p>
+                    ユーザー名: <strong>operator</strong><br>
+                    パスワード: <strong>demo2025</strong><br>
+                    または「デモログイン」ボタンをクリック
+                </p>
+            </div>
+            
+            <div class="back-link">
+                <a href="/demo.html">← システムのデモサイトに戻る</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ログイン処理
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // 簡易認証チェック（実際の実装では暗号化されたパスワードを使用）
+            if (username === 'operator' && password === 'demo2025') {
+                showAlert('ログインに成功しました', 'success');
+                
+                // デモ用トークンをセッションストレージに保存
+                sessionStorage.setItem('operator_token', 'operator_demo_token_2025');
+                sessionStorage.setItem('operator_user', username);
+                
+                // ダッシュボードへリダイレクト
+                setTimeout(() => {
+                    window.location.href = '/operator-dashboard.html';
+                }, 1000);
+                
+            } else {
+                showAlert('ユーザー名またはパスワードが間違っています', 'error');
+            }
+        }
+        
+        // デモログイン
+        function demoLogin() {
+            document.getElementById('username').value = 'operator';
+            document.getElementById('password').value = 'demo2025';
+            
+            showAlert('デモ認証情報を入力しました', 'success');
+            
+            // 自動ログイン
+            setTimeout(() => {
+                sessionStorage.setItem('operator_token', 'operator_demo_token_2025');
+                sessionStorage.setItem('operator_user', 'operator');
+                window.location.href = '/operator-dashboard.html';
+            }, 1500);
+        }
+        
+        // アラート表示
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert ${type}`;
+            alertDiv.style.display = 'block';
+            
+            if (type === 'error') {
+                setTimeout(() => {
+                    alertDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // ページ読み込み時の処理
+        document.addEventListener('DOMContentLoaded', function() {
+            // 既にログイン済みの場合はダッシュボードへリダイレクト
+            const token = sessionStorage.getItem('operator_token');
+            if (token === 'operator_demo_token_2025') {
+                showAlert('既にログインしています。ダッシュボードへ移動します...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/operator-dashboard.html';
+                }, 1000);
+            }
+        });
+        
+        // Enterキーでログイン
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                const form = document.getElementById('loginForm');
+                if (form) {
+                    form.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+    </script>
+</body>
+</html>

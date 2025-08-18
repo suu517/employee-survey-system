@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企業管理ダッシュボード - 従業員満足度調査システム</title>
+    <link rel="stylesheet" href="company-style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- ヘッダー -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>📊 企業管理ダッシュボード</h1>
+                    <p class="company-name" id="companyName">読み込み中...</p>
+                </div>
+                <div class="header-actions">
+                    <button class="refresh-btn" onclick="refreshData()">🔄 更新</button>
+                    <button class="logout-btn" onclick="logout()">ログアウト</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <!-- サマリーカード -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="card-icon">🔗</div>
+                    <div class="card-content">
+                        <h3>発行済みURL</h3>
+                        <div class="card-value" id="totalUrls">-</div>
+                        <div class="card-subtitle">現在利用可能</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">✅</div>
+                    <div class="card-content">
+                        <h3>回答数</h3>
+                        <div class="card-value" id="totalResponses">-</div>
+                        <div class="card-subtitle">今月の実績</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">📈</div>
+                    <div class="card-content">
+                        <h3>平均満足度</h3>
+                        <div class="card-value" id="avgSatisfaction">-</div>
+                        <div class="card-subtitle">5点満点中</div>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-content">
+                        <h3>完了率</h3>
+                        <div class="card-value" id="completionRate">-</div>
+                        <div class="card-subtitle">回答完了率</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- URL管理セクション -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>🔗 調査URL管理</h2>
+                    <button class="create-btn" onclick="showCreateModal()">+ 新しいURLを発行</button>
+                </div>
+
+                <!-- URL一覧 -->
+                <div class="url-list" id="urlList">
+                    <!-- URLカードはJavaScriptで動的に挿入 -->
+                </div>
+            </div>
+
+            <!-- 分析結果セクション -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>📊 調査結果サマリー</h2>
+                    <button class="export-btn" onclick="exportResults()">📤 データ出力</button>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h3>満足度分布</h3>
+                        <div class="chart-placeholder">
+                            <div class="satisfaction-bars" id="satisfactionBars">
+                                <!-- 満足度バーチャートをここに挿入 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>最近の回答状況</h3>
+                        <div class="recent-responses" id="recentResponses">
+                            <!-- 最新回答をここに挿入 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- モーダル: 新規URL作成 -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>新しい調査URLを発行</h3>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="createUrlForm">
+                    <div class="form-group">
+                        <label>調査名・説明</label>
+                        <input type="text" id="urlDescription" placeholder="例：2025年度従業員満足度調査" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>最大回答数</label>
+                        <input type="number" id="maxResponses" value="50" min="1" max="1000" required>
+                        <small>1〜1000の範囲で設定してください</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>有効期限</label>
+                        <select id="expiryHours" required>
+                            <option value="24">24時間</option>
+                            <option value="72">3日間</option>
+                            <option value="168">1週間</option>
+                            <option value="720" selected>30日間</option>
+                            <option value="2160">90日間</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeModal()">キャンセル</button>
+                <button class="submit-btn" onclick="createUrl()">URLを発行</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル: URL詳細 -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>調査URL詳細</h3>
+                <span class="modal-close" onclick="closeDetailModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="url-detail" id="urlDetailContent">
+                    <!-- URL詳細情報をここに表示 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="copy-btn" onclick="copyUrl()">📋 URLをコピー</button>
+                <button class="deactivate-btn" onclick="deactivateUrl()">🚫 無効化</button>
+                <button class="close-btn" onclick="closeDetailModal()">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="company-script.js"></script>
+</body>
+</html>
