@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>従業員満足度調査システム - デモサイト</title>
+    <title>従業員満足度調査システム - 無料トライアル</title>
     <style>
         * {
             margin: 0;
@@ -40,9 +40,57 @@
             margin-bottom: 10px;
         }
         
+        .trial-badge {
+            display: inline-block;
+            background: #ff4757;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
         .demo-header p {
             font-size: 1.2rem;
             opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: #2ecc71;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .cta-button:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+        }
+        
+        .cta-button.secondary {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+        }
+        
+        .cta-button.secondary:hover {
+            background: white;
+            color: #667eea;
         }
         
         .demo-content {
@@ -174,13 +222,18 @@
 <body>
     <div class="demo-container">
         <div class="demo-header">
+            <div class="trial-badge">🎆 無料トライアル実施中</div>
             <h1>🏢 従業員満足度調査システム</h1>
-            <p>Enterprise Employee Satisfaction Survey System - Demo Site</p>
+            <p>企業の生産性向上と従業員のエンゲージメント向上を実現</p>
+            <div class="demo-buttons">
+                <a href="#trial-form" class="cta-button">🚀 無料トライアルを開始</a>
+                <a href="#demo-experience" class="cta-button secondary">📱 システムを体験</a>
+            </div>
         </div>
         
         <div class="demo-content">
-            <div class="demo-section">
-                <h2>📋 システム体験</h2>
+            <div id="demo-experience" class="demo-section">
+                <h2>📱 システム体験 - 実際の操作をお試しください</h2>
                 <div class="demo-buttons">
                     <a href="/index.html" class="demo-button">
                         <span class="icon">📝</span>
@@ -189,7 +242,7 @@
                     </a>
                     <a href="/admin-dashboard.html" class="demo-button">
                         <span class="icon">📊</span>
-                        企業管理者ダッシュボード<br>
+                        調査結果ダッシュボード<br>
                         <small>リアルタイム分析結果を確認</small>
                     </a>
                     <a href="/company-login.html" class="demo-button" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
@@ -206,7 +259,7 @@
             </div>
             
             <div class="stats">
-                <h3>📈 デモデータ統計（30件のサンプル回答）</h3>
+                <h3>📈 サンプル結果 - 実際の調査結果の例</h3>
                 <div class="stats-grid">
                     <div class="stat-item">
                         <span class="stat-number">30</span>
@@ -253,13 +306,49 @@
                 </div>
             </div>
             
+            <div id="trial-form" class="demo-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px; padding: 40px; margin: 40px 0;">
+                <h2 style="color: white; text-align: center; margin-bottom: 30px;">🚀 無料トライアル申し込み</h2>
+                <form style="max-width: 600px; margin: 0 auto;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <input type="text" placeholder="企業名" style="padding: 15px; border: none; border-radius: 10px; font-size: 1rem;" required>
+                        <input type="text" placeholder="部署・役職" style="padding: 15px; border: none; border-radius: 10px; font-size: 1rem;" required>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <input type="text" placeholder="お名前" style="padding: 15px; border: none; border-radius: 10px; font-size: 1rem;" required>
+                        <input type="email" placeholder="メールアドレス" style="padding: 15px; border: none; border-radius: 10px; font-size: 1rem;" required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <input type="tel" placeholder="電話番号" style="width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 1rem;" required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <select style="width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 1rem;" required>
+                            <option value="">従業員数を選択してください</option>
+                            <option value="1-50">1-50名</option>
+                            <option value="51-100">51-100名</option>
+                            <option value="101-500">101-500名</option>
+                            <option value="501-1000">501-1000名</option>
+                            <option value="1000+">1000名以上</option>
+                        </select>
+                    </div>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button type="submit" style="background: #2ecc71; color: white; border: none; padding: 18px 40px; border-radius: 25px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='#27ae60'" onmouseout="this.style.background='#2ecc71'">
+                            📧 無料トライアルを申し込む
+                        </button>
+                    </div>
+                    <p style="text-align: center; margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+                        ※ 1週間無料でご利用いただけます。自動課金はありません。
+                    </p>
+                </form>
+            </div>
+            
             <div class="demo-section">
-                <h2>🚀 次のステップ</h2>
+                <h2>🚀 まずはシステムを体験</h2>
                 <div class="stats">
-                    <h3>システムの詳細体験はこちら</h3>
+                    <h3>実際の操作画面をお試しください</h3>
                     <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
-                        <a href="/admin-dashboard.html" style="background: #667eea; color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold;">管理者ダッシュボード</a>
-                        <a href="/index.html" style="background: #764ba2; color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold;">調査体験</a>
+                        <a href="/admin-dashboard.html" style="background: #667eea; color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold;">📊 調査結果ダッシュボード</a>
+                        <a href="/index.html" style="background: #764ba2; color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold;">📝 調査回答体験</a>
+                        <a href="/operator-login.html" style="background: #e74c3c; color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold;">🛠️ 運営管理ダッシュボード</a>
                     </div>
                 </div>
             </div>

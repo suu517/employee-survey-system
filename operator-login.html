@@ -215,8 +215,8 @@
             <div class="demo-info">
                 <h4>📝 デモ用認証情報</h4>
                 <p>
-                    ユーザー名: <strong>operator</strong><br>
-                    パスワード: <strong>demo2025</strong><br>
+                    ユーザー名: <strong>trial-admin</strong><br>
+                    パスワード: <strong>trial2025</strong><br>
                     または「デモログイン」ボタンをクリック
                 </p>
             </div>
@@ -236,11 +236,11 @@
             const password = document.getElementById('password').value;
             
             // 簡易認証チェック（実際の実装では暗号化されたパスワードを使用）
-            if (username === 'operator' && password === 'demo2025') {
+            if (username === 'trial-admin' && password === 'trial2025') {
                 showAlert('ログインに成功しました', 'success');
                 
                 // デモ用トークンをセッションストレージに保存
-                sessionStorage.setItem('operator_token', 'operator_demo_token_2025');
+                sessionStorage.setItem('operator_token', 'trial_operator_token_2025');
                 sessionStorage.setItem('operator_user', username);
                 
                 // ダッシュボードへリダイレクト
@@ -255,15 +255,15 @@
         
         // デモログイン
         function demoLogin() {
-            document.getElementById('username').value = 'operator';
-            document.getElementById('password').value = 'demo2025';
+            document.getElementById('username').value = 'trial-admin';
+            document.getElementById('password').value = 'trial2025';
             
             showAlert('デモ認証情報を入力しました', 'success');
             
             // 自動ログイン
             setTimeout(() => {
-                sessionStorage.setItem('operator_token', 'operator_demo_token_2025');
-                sessionStorage.setItem('operator_user', 'operator');
+                sessionStorage.setItem('operator_token', 'trial_operator_token_2025');
+                sessionStorage.setItem('operator_user', 'trial-admin');
                 window.location.href = '/operator-dashboard.html';
             }, 1500);
         }
@@ -286,7 +286,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 既にログイン済みの場合はダッシュボードへリダイレクト
             const token = sessionStorage.getItem('operator_token');
-            if (token === 'operator_demo_token_2025') {
+            if (token === 'trial_operator_token_2025') {
                 showAlert('既にログインしています。ダッシュボードへ移動します...', 'success');
                 setTimeout(() => {
                     window.location.href = '/operator-dashboard.html';

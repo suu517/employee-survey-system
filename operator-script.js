@@ -104,7 +104,7 @@ function initializeTabContent(tabName) {
 // 認証チェック
 function checkAuthentication() {
     const token = sessionStorage.getItem('operator_token');
-    return token === 'operator_demo_token_2025';
+    return token === 'trial_operator_token_2025';
 }
 
 // APIリクエスト用ヘッダー取得
@@ -726,4 +726,311 @@ function getMockSecurityData() {
             }
         ]
     };
+}
+
+// ====================
+// 企業管理機能
+// ====================
+
+let companiesData = [];
+let editingCompanyId = null;
+
+// タブ切り替え時のデータ読み込み
+function loadCompaniesData() {
+    fetch('/api/admin/companies')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                companiesData = data.companies || [];
+                renderCompaniesTable();
+            } else {
+                showNotification('企業データの読み込みに失敗しました', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('企業データ読み込みエラー:', error);
+            showNotification('企業データの読み込みに失敗しました', 'error');
+        });
+}
+
+// 企業テーブル表示
+function renderCompaniesTable() {
+    const tableBody = document.getElementById('companiesTableBody');
+    
+    if (companiesData.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 40px; color: #6b7280;">
+                    まだ企業が登録されていません。「新規企業追加」から追加してください。
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    const rows = companiesData.map(company => {
+        const statusClass = company.is_active ? 'active' : 'inactive';
+        const statusText = company.is_active ? '有効' : '無効';
+        
+        return `
+            <tr>
+                <td><code>${company.company_id}</code></td>
+                <td>${escapeHtml(company.company_name)}</td>
+                <td><code>${company.access_key}</code></td>
+                <td>${company.max_urls}</td>
+                <td>${company.current_urls || 0}</td>
+                <td><span class="company-status ${statusClass}">${statusText}</span></td>
+                <td>${formatDate(company.created_at)}</td>
+                <td>
+                    <div class="company-actions">
+                        <button class="company-action-btn edit-btn" onclick="showEditCompanyModal('${company.company_id}')">
+                            ✏️ 編集
+                        </button>
+                        <button class="company-action-btn view-urls-btn" onclick="viewCompanyUrls('${company.company_id}')">
+                            🔗 URL確認
+                        </button>
+                        <button class="company-action-btn delete-btn" onclick="deleteCompany('${company.company_id}')">
+                            🗑️ 削除
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    tableBody.innerHTML = rows;
+}
+
+// 新規企業追加モーダル表示
+function showAddCompanyModal() {
+    const modal = document.getElementById('addCompanyModal');
+    modal.style.display = 'flex';
+    
+    // フォームリセット
+    document.getElementById('newCompanyId').value = '';
+    document.getElementById('newCompanyName').value = '';
+    document.getElementById('newAccessKey').value = '';
+    document.getElementById('newMaxUrls').value = '10';
+    document.getElementById('newMaxResponsesPerUrl').value = '1000';
+}
+
+// 新規企業追加モーダル閉じる
+function closeAddCompanyModal() {
+    document.getElementById('addCompanyModal').style.display = 'none';
+}
+
+// 企業編集モーダル表示
+function showEditCompanyModal(companyId) {
+    const company = companiesData.find(c => c.company_id === companyId);
+    if (!company) return;
+    
+    editingCompanyId = companyId;
+    
+    document.getElementById('editCompanyId').value = company.company_id;
+    document.getElementById('editCompanyName').value = company.company_name;
+    document.getElementById('editAccessKey').value = company.access_key;
+    document.getElementById('editMaxUrls').value = company.max_urls;
+    document.getElementById('editMaxResponsesPerUrl').value = company.max_responses_per_url;
+    document.getElementById('editIsActive').checked = company.is_active;
+    
+    document.getElementById('editCompanyModal').style.display = 'flex';
+}
+
+// 企業編集モーダル閉じる
+function closeEditCompanyModal() {
+    document.getElementById('editCompanyModal').style.display = 'none';
+    editingCompanyId = null;
+}
+
+// 企業アカウント作成
+async function createCompanyAccount() {
+    const companyId = document.getElementById('newCompanyId').value.trim();
+    const companyName = document.getElementById('newCompanyName').value.trim();
+    const accessKey = document.getElementById('newAccessKey').value.trim();
+    const maxUrls = parseInt(document.getElementById('newMaxUrls').value);
+    const maxResponsesPerUrl = parseInt(document.getElementById('newMaxResponsesPerUrl').value);
+    
+    // バリデーション
+    if (!companyId || !companyName || !accessKey) {
+        showNotification('必須項目を入力してください', 'error');
+        return;
+    }
+    
+    if (!/^[a-zA-Z0-9\-]+$/.test(companyId)) {
+        showNotification('企業IDは英数字とハイフンのみ使用可能です', 'error');
+        return;
+    }
+    
+    if (maxUrls < 1 || maxUrls > 100) {
+        showNotification('URL発行上限は1〜100の範囲で設定してください', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/admin/companies', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                company_id: companyId,
+                company_name: companyName,
+                access_key: accessKey,
+                max_urls: maxUrls,
+                max_responses_per_url: maxResponsesPerUrl
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || '企業作成に失敗しました');
+        }
+        
+        showNotification('企業アカウントを作成しました', 'success');
+        closeAddCompanyModal();
+        loadCompaniesData();
+        
+    } catch (error) {
+        console.error('企業作成エラー:', error);
+        showNotification(error.message || '企業作成に失敗しました', 'error');
+    }
+}
+
+// 企業アカウント更新
+async function updateCompanyAccount() {
+    if (!editingCompanyId) return;
+    
+    const companyName = document.getElementById('editCompanyName').value.trim();
+    const accessKey = document.getElementById('editAccessKey').value.trim();
+    const maxUrls = parseInt(document.getElementById('editMaxUrls').value);
+    const maxResponsesPerUrl = parseInt(document.getElementById('editMaxResponsesPerUrl').value);
+    const isActive = document.getElementById('editIsActive').checked;
+    
+    if (!companyName || !accessKey) {
+        showNotification('必須項目を入力してください', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/admin/companies/${editingCompanyId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                company_name: companyName,
+                access_key: accessKey,
+                max_urls: maxUrls,
+                max_responses_per_url: maxResponsesPerUrl,
+                is_active: isActive
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || '企業更新に失敗しました');
+        }
+        
+        showNotification('企業情報を更新しました', 'success');
+        closeEditCompanyModal();
+        loadCompaniesData();
+        
+    } catch (error) {
+        console.error('企業更新エラー:', error);
+        showNotification(error.message || '企業更新に失敗しました', 'error');
+    }
+}
+
+// 企業削除
+async function deleteCompany(companyId) {
+    const company = companiesData.find(c => c.company_id === companyId);
+    if (!company) return;
+    
+    const confirmMessage = `企業「${company.company_name}」を削除しますか？\n\nこの操作は取り消せません。企業に関連するすべてのURLと回答データも削除されます。`;
+    
+    if (!confirm(confirmMessage)) return;
+    
+    try {
+        const response = await fetch(`/api/admin/companies/${companyId}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || '企業削除に失敗しました');
+        }
+        
+        showNotification('企業を削除しました', 'success');
+        loadCompaniesData();
+        
+    } catch (error) {
+        console.error('企業削除エラー:', error);
+        showNotification(error.message || '企業削除に失敗しました', 'error');
+    }
+}
+
+// 企業のURL確認
+function viewCompanyUrls(companyId) {
+    const company = companiesData.find(c => c.company_id === companyId);
+    if (!company) return;
+    
+    // 企業ダッシュボードへのリンクを新規タブで開く
+    const loginUrl = `/company-login.html`;
+    window.open(loginUrl, '_blank');
+    
+    showNotification(`企業「${company.company_name}」のログインページを開きました`, 'info');
+}
+
+// ユーティリティ関数
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+}
+
+// 既存のshowTabを上書き
+function showTab(tabName) {
+    // すべてのタブを非表示
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(tab => tab.classList.remove('active'));
+    
+    // すべてのタブボタンを非アクティブ
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => btn.classList.remove('active'));
+    
+    // 指定されたタブを表示
+    const targetTab = document.getElementById(tabName);
+    if (targetTab) {
+        targetTab.classList.add('active');
+    }
+    
+    // 対応するタブボタンをアクティブ
+    const targetBtn = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+    if (targetBtn) {
+        targetBtn.classList.add('active');
+    }
+    
+    // タブ切り替え時のデータ読み込み
+    if (tabName === 'companies') {
+        loadCompaniesData();
+    } else if (tabName === 'overview') {
+        loadSystemData();
+    } else if (tabName === 'analytics') {
+        updateAnalyticsData();
+    } else if (tabName === 'security') {
+        updateSecurityData();
+    }
 }

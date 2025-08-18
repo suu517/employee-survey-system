@@ -139,16 +139,6 @@ def init_database():
     count = cursor.fetchone()[0]
     conn.close()
     
-    if count == 0:
-        logger.info("デモデータを挿入しています...")
-        try:
-            import demo_data
-            demo_data.insert_demo_data()
-            logger.info("✅ デモデータの挿入が完了しました")
-        except ImportError:
-            logger.warning("demo_data.pyが見つかりません。デモデータの挿入をスキップします。")
-        except Exception as e:
-            logger.warning(f"デモデータの挿入に失敗しました: {e}")
 
 # アプリケーション起動時にデータベースを初期化
 try:
@@ -758,7 +748,7 @@ def require_operator_auth(f):
         
         # 仮の認証チェック（本格実装時に置き換え）
         token = auth_header.split(' ')[1]
-        if token != 'operator_demo_token_2025':
+        if not token or len(token) < 16:
             return jsonify({'error': '無効な認証トークンです'}), 401
         
         return f(*args, **kwargs)
@@ -1080,13 +1070,7 @@ def init_company_tables():
         )
     ''')
     
-    # デモ企業アカウントを作成
-    cursor.execute('SELECT COUNT(*) FROM company_accounts WHERE company_id = ?', ('demo-company',))
-    if cursor.fetchone()[0] == 0:
-        cursor.execute('''
-            INSERT INTO company_accounts (company_id, company_name, access_key)
-            VALUES (?, ?, ?)
-        ''', ('demo-company', 'デモ企業株式会社', 'demo2025'))
+    # 初期企業アカウントは管理者が作成する
     
     conn.commit()
     conn.close()

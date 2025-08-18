@@ -116,41 +116,38 @@
 
             <!-- 企業管理タブ -->
             <div id="companies" class="tab-content">
-                <div class="section-header">
-                    <h2>🏢 企業管理</h2>
-                    <button class="add-btn" onclick="showAddCompanyModal()">+ 新規企業追加</button>
-                </div>
+                <div class="companies-section">
+                    <div class="section-header">
+                        <h2>🏢 企業アカウント管理</h2>
+                        <button class="action-button add-company-btn" onclick="showAddCompanyModal()">
+                            ➕ 新規企業追加
+                        </button>
+                    </div>
 
-                <!-- 検索・フィルター -->
-                <div class="search-filter">
-                    <input type="text" id="companySearch" placeholder="企業名で検索..." onkeyup="filterCompanies()">
-                    <select id="companyFilter" onchange="filterCompanies()">
-                        <option value="">全ての企業</option>
-                        <option value="active">アクティブ</option>
-                        <option value="inactive">非アクティブ</option>
-                        <option value="trial">トライアル</option>
-                    </select>
-                </div>
-
-                <!-- 企業一覧テーブル -->
-                <div class="table-container">
-                    <table class="data-table" id="companiesTable">
-                        <thead>
-                            <tr>
-                                <th>企業名</th>
-                                <th>業界</th>
-                                <th>従業員数</th>
-                                <th>プラン</th>
-                                <th>回答数</th>
-                                <th>最終利用</th>
-                                <th>ステータス</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="companiesTableBody">
-                            <!-- データは JavaScript で挿入 -->
-                        </tbody>
-                    </table>
+                    <!-- 企業一覧 -->
+                    <div class="companies-list">
+                        <div class="companies-table-container">
+                            <table class="companies-table">
+                                <thead>
+                                    <tr>
+                                        <th>企業ID</th>
+                                        <th>企業名</th>
+                                        <th>アクセスキー</th>
+                                        <th>URL発行上限</th>
+                                        <th>現在のURL数</th>
+                                        <th>状態</th>
+                                        <th>作成日</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="companiesTableBody">
+                                    <tr>
+                                        <td colspan="8" class="loading">読み込み中...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -374,6 +371,84 @@
             <div class="modal-footer">
                 <button class="cancel-btn" onclick="closeModal('addCompanyModal')">キャンセル</button>
                 <button class="submit-btn" onclick="addCompany()">追加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新規企業追加モーダル -->
+    <div id="addCompanyModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏢 新規企業追加</h2>
+                <span class="close" onclick="closeAddCompanyModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>企業ID <span class="required">*</span></label>
+                    <input type="text" id="newCompanyId" placeholder="例: abc-corporation" required>
+                    <small>英数字とハイフンのみ使用可能</small>
+                </div>
+                <div class="form-group">
+                    <label>企業名 <span class="required">*</span></label>
+                    <input type="text" id="newCompanyName" placeholder="例: 株式会社ABC" required>
+                </div>
+                <div class="form-group">
+                    <label>アクセスキー <span class="required">*</span></label>
+                    <input type="text" id="newAccessKey" placeholder="例: secure123456" required>
+                    <small>企業側ログインで使用するパスワード</small>
+                </div>
+                <div class="form-group">
+                    <label>URL発行上限</label>
+                    <input type="number" id="newMaxUrls" value="10" min="1" max="100">
+                    <small>この企業が作成できるURL数の上限</small>
+                </div>
+                <div class="form-group">
+                    <label>1URL当たりの回答上限</label>
+                    <input type="number" id="newMaxResponsesPerUrl" value="1000" min="1" max="10000">
+                    <small>1つのURLで受け取れる回答数の上限</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeAddCompanyModal()">キャンセル</button>
+                <button class="submit-btn" onclick="createCompanyAccount()">企業を追加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 企業編集モーダル -->
+    <div id="editCompanyModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ 企業情報編集</h2>
+                <span class="close" onclick="closeEditCompanyModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editCompanyId">
+                <div class="form-group">
+                    <label>企業名 <span class="required">*</span></label>
+                    <input type="text" id="editCompanyName" required>
+                </div>
+                <div class="form-group">
+                    <label>アクセスキー <span class="required">*</span></label>
+                    <input type="text" id="editAccessKey" required>
+                </div>
+                <div class="form-group">
+                    <label>URL発行上限</label>
+                    <input type="number" id="editMaxUrls" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label>1URL当たりの回答上限</label>
+                    <input type="number" id="editMaxResponsesPerUrl" min="1" max="10000">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="editIsActive"> アカウントを有効化
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeEditCompanyModal()">キャンセル</button>
+                <button class="submit-btn" onclick="updateCompanyAccount()">更新</button>
             </div>
         </div>
     </div>

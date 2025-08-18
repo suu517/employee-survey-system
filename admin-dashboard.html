@@ -20,9 +20,6 @@
                     <button class="action-button refresh-button" onclick="refreshData()">
                         🔄 データ更新
                     </button>
-                    <button class="action-button url-button" onclick="openUrlModal()">
-                        🔗 URL管理
-                    </button>
                     <button class="action-button export-button" onclick="exportData()">
                         📥 エクスポート
                     </button>
@@ -35,8 +32,7 @@
 
         <!-- タブナビゲーション -->
         <nav class="tab-navigation">
-            <button class="tab-btn active" onclick="showTab('dashboard')">📊 ダッシュボード</button>
-            <button class="tab-btn" onclick="showTab('companies')">🏢 企業管理</button>
+            <button class="tab-btn active" onclick="showTab('dashboard')">📊 調査結果ダッシュボード</button>
         </nav>
 
         <!-- タブコンテンツ -->
@@ -678,164 +674,9 @@
         </div>
             </div>
 
-            <!-- 企業管理タブ -->
-            <div id="companies" class="tab-content">
-                <div class="companies-section">
-                    <div class="section-header">
-                        <h2>🏢 企業アカウント管理</h2>
-                        <button class="action-button add-company-btn" onclick="showAddCompanyModal()">
-                            ➕ 新規企業追加
-                        </button>
-                    </div>
-
-                    <!-- 企業一覧 -->
-                    <div class="companies-list">
-                        <div class="companies-table-container">
-                            <table class="companies-table">
-                                <thead>
-                                    <tr>
-                                        <th>企業ID</th>
-                                        <th>企業名</th>
-                                        <th>アクセスキー</th>
-                                        <th>URL発行上限</th>
-                                        <th>現在のURL数</th>
-                                        <th>状態</th>
-                                        <th>作成日</th>
-                                        <th>操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="companiesTableBody">
-                                    <tr>
-                                        <td colspan="8" class="loading">読み込み中...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- 新規企業追加モーダル -->
-    <div id="addCompanyModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🏢 新規企業追加</h2>
-                <span class="close" onclick="closeAddCompanyModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>企業ID <span class="required">*</span></label>
-                    <input type="text" id="newCompanyId" placeholder="例: abc-corporation" required>
-                    <small>英数字とハイフンのみ使用可能</small>
-                </div>
-                <div class="form-group">
-                    <label>企業名 <span class="required">*</span></label>
-                    <input type="text" id="newCompanyName" placeholder="例: 株式会社ABC" required>
-                </div>
-                <div class="form-group">
-                    <label>アクセスキー <span class="required">*</span></label>
-                    <input type="text" id="newAccessKey" placeholder="例: secure123456" required>
-                    <small>企業側ログインで使用するパスワード</small>
-                </div>
-                <div class="form-group">
-                    <label>URL発行上限</label>
-                    <input type="number" id="newMaxUrls" value="10" min="1" max="100">
-                    <small>この企業が作成できるURL数の上限</small>
-                </div>
-                <div class="form-group">
-                    <label>1URL当たりの回答上限</label>
-                    <input type="number" id="newMaxResponsesPerUrl" value="1000" min="1" max="10000">
-                    <small>1つのURLで受け取れる回答数の上限</small>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="cancel-btn" onclick="closeAddCompanyModal()">キャンセル</button>
-                <button class="submit-btn" onclick="createCompanyAccount()">企業を追加</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 企業編集モーダル -->
-    <div id="editCompanyModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>✏️ 企業情報編集</h2>
-                <span class="close" onclick="closeEditCompanyModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="editCompanyId">
-                <div class="form-group">
-                    <label>企業名 <span class="required">*</span></label>
-                    <input type="text" id="editCompanyName" required>
-                </div>
-                <div class="form-group">
-                    <label>アクセスキー <span class="required">*</span></label>
-                    <input type="text" id="editAccessKey" required>
-                </div>
-                <div class="form-group">
-                    <label>URL発行上限</label>
-                    <input type="number" id="editMaxUrls" min="1" max="100">
-                </div>
-                <div class="form-group">
-                    <label>1URL当たりの回答上限</label>
-                    <input type="number" id="editMaxResponsesPerUrl" min="1" max="10000">
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="editIsActive"> アカウントを有効化
-                    </label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="cancel-btn" onclick="closeEditCompanyModal()">キャンセル</button>
-                <button class="submit-btn" onclick="updateCompanyAccount()">更新</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- URL管理モーダル -->
-    <div id="urlModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📋 調査URL管理</h2>
-                <span class="close" onclick="closeUrlModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <!-- URL作成フォーム -->
-                <div class="url-creation-form">
-                    <h3>🚀 新しい調査URL作成</h3>
-                    <div class="form-group">
-                        <label>説明 (任意)</label>
-                        <input type="text" id="urlDescription" placeholder="例: A部署向け調査">
-                    </div>
-                    <div class="form-group">
-                        <label>最大回答数</label>
-                        <input type="number" id="maxResponses" value="1" min="1" max="1000">
-                    </div>
-                    <div class="form-group">
-                        <label>有効期限 (時間)</label>
-                        <select id="expiresHours">
-                            <option value="24">24時間</option>
-                            <option value="72">3日間</option>
-                            <option value="168">1週間</option>
-                            <option value="720">1ヶ月</option>
-                        </select>
-                    </div>
-                    <button class="create-url-btn" onclick="createSurveyUrl()">URL作成</button>
-                </div>
-
-                <!-- URL一覧 -->
-                <div class="url-list">
-                    <h3>📊 作成済みURL一覧</h3>
-                    <div id="urlListContainer">
-                        <div class="loading">読み込み中...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="admin-script.js"></script>
 </body>
