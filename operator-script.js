@@ -992,6 +992,19 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// 通知表示関数
+function showNotification(message, type = 'info') {
+    // 簡易的な通知表示（より良いUIは後で実装可能）
+    const prefix = {
+        'success': '✅ ',
+        'error': '❌ ',
+        'warning': '⚠️ ',
+        'info': 'ℹ️ '
+    };
+    
+    alert((prefix[type] || '') + message);
+}
+
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('ja-JP', {
